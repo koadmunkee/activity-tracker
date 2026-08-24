@@ -22,7 +22,6 @@ def upload_to_gcs_csv(data: List[Dict[str, Any]], file_name) -> None:
     csv_buffer = io.StringIO()
     fieldnames = ["physicalTime", "bloodGlucoseMilligramsPerDeciliter"]
     writer = csv.DictWriter(csv_buffer, fieldnames=fieldnames)
-    writer.writeheader()
 
     for item in data:
         blood_glucose_info = item.get("bloodGlucose", {})
@@ -81,21 +80,28 @@ def sync_blood_glucose(request):
 
     try:
         # TODO(georgeruiz): handle most_recent = None
+        data_points = []
+        page_token = None
         earliest_sample_time = most_recent + timedelta(seconds=3)
-        response = health_service.users().dataTypes().dataPoints().list(
-            parent="users/me/dataTypes/blood-glucose",
-            filter=f'blood_glucose.sample_time.physical_time >= "{earliest_sample_time.isoformat()}"'
-        ).execute()
 
-        # TODO(georgeruiz): handle pagination
-        data_points = response.get("dataPoints", [])
+        while True:
+            response = health_service.users().dataTypes().dataPoints().list(
+                parent="users/me/dataTypes/blood-glucose",
+                filter=f'blood_glucose.sample_time.physical_time >= "{earliest_sample_time.isoformat()}"',
+                pageToken = page_token
+            ).execute()
+            
+            data_points.extend(response.get("dataPoints", []))
+
+            page_token = response.get("nextPageToken")
+            if not page_token:
+                break
 
         upload_to_gcs_csv(data_points, f"{earliest_sample_time.isoformat()}.csv")
         
         return {
             "status": "success",
-            "count": len(data_points),
-            "data": data_points
+            "count": len(data_points)
         }, 200
 
     except Exception as e:
