@@ -1,15 +1,53 @@
+import csv
+import io
 import json
 import functions_framework
-from google.cloud import bigquery, secretmanager
+from google.cloud import bigquery, secretmanager, storage
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 import google.auth
 from datetime import timedelta
+from typing import Any, Dict, List
 
 SECRET_NAME = "googlehealth-oauth-credentials"
 CLIENT_ID = "245829505646-0cqt84djp87ekhn0uebr0s6opdf6sofu.apps.googleusercontent.com"
 DATASET_ID = "activity_tracker_dataset"
 TABLE_ID = "blood_glucose_formatted"
+BUCKET_NAME = "georgeruiz-activity-tracker"
+
+def upload_to_gcs_csv(data: List[Dict[str, Any]], file_name) -> None:
+    if not data:
+        return
+
+    csv_buffer = io.StringIO()
+    fieldnames = ["physicalTime", "bloodGlucoseMilligramsPerDeciliter"]
+    writer = csv.DictWriter(csv_buffer, fieldnames=fieldnames)
+    writer.writeheader()
+
+    for item in data:
+        blood_glucose_info = item.get("bloodGlucose", {})
+
+        # Extract nested values safely using dict.get()
+        glucose_val = blood_glucose_info.get(
+            "bloodGlucoseMilligramsPerDeciliter"
+        )
+        physical_time = blood_glucose_info.get("sampleTime", {}).get(
+            "physicalTime"
+        )
+
+        if glucose_val is not None and physical_time:
+            writer.writerow(
+                {
+                    "physicalTime": physical_time,
+                    "bloodGlucoseMilligramsPerDeciliter": glucose_val,
+                }
+            )
+
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(BUCKET_NAME)
+    blob = bucket.blob(file_name)
+
+    blob.upload_from_string(csv_buffer.getvalue(), content_type="text/csv")
 
 def get_oauth_credentials() -> Credentials:
     sm_client = secretmanager.SecretManagerServiceClient()
@@ -49,9 +87,10 @@ def sync_blood_glucose(request):
             filter=f'blood_glucose.sample_time.physical_time >= "{earliest_sample_time.isoformat()}"'
         ).execute()
 
+        # TODO(georgeruiz): handle pagination
         data_points = response.get("dataPoints", [])
 
-        # TODO(georgeruiz): write CSV to cloud storage
+        upload_to_gcs_csv(data_points, f"{earliest_sample_time.isoformat()}.csv")
         
         return {
             "status": "success",
