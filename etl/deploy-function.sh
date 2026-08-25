@@ -5,5 +5,4 @@ gcloud functions deploy sync_blood_glucose \
     --runtime=python311 \
     --region=us-west2 \
     --trigger-http \
-    --entry-point=sync_blood_glucose \
-    --allow-unauthenticated
+    --entry-point=sync_blood_glucose
