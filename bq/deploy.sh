@@ -4,7 +4,16 @@ set -euo pipefail
 
 PROJECT_ID=georgeruiz-experimental
 
-SQL_FILES=("create-blood_glucose_initial_dump.sql" "create-blood_glucose_delta.sql" "create-blood_glucose.sql")
+SQL_FILES=(
+    "create-blood_glucose_initial_dump.sql"
+    "create-blood_glucose_delta.sql"
+    "create-blood_glucose.sql"
+    "create-meal_v1_raw.sql"
+    "create-meal_v2_raw.sql"
+    "create-meal_v3_raw.sql"
+    "create-meal.sql"
+    "create-postprandial_glucose_3h.sql"
+)
 
 for SQL_FILE in "${SQL_FILES[@]}"
 do
