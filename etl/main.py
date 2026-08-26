@@ -12,7 +12,7 @@ from typing import Any, Dict, List
 SECRET_NAME = "googlehealth-oauth-credentials"
 CLIENT_ID = "245829505646-0cqt84djp87ekhn0uebr0s6opdf6sofu.apps.googleusercontent.com"
 DATASET_ID = "activity_tracker_dataset"
-TABLE_ID = "blood_glucose_formatted"
+TABLE_ID = "blood_glucose"
 BUCKET_NAME = "georgeruiz-activity-tracker"
 
 def upload_to_gcs_csv(data: List[Dict[str, Any]], file_name) -> None:
