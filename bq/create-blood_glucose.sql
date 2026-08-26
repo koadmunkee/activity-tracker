@@ -4,7 +4,7 @@ SELECT *
 FROM
     (
         SELECT
-            level,
+            level*18 AS level,
             TIMESTAMP_MILLIS(local_date_time) AS time
         FROM `activity_tracker_dataset.blood_glucose_initial_dump`
     )
