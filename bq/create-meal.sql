@@ -3,7 +3,8 @@ AS
 SELECT
     TIMESTAMP(
         DATETIME(date, PARSE_TIME('%H:%M', time)),
-        IFNULL(timezone, 'America/Los_Angeles')) AS meal_time,
+        IFNULL(timezone, 'America/Los_Angeles')) AS meal_timestamp,
+    PARSE_TIME('%H:%M', time) AS local_meal_time,
     calorie,
     carbohydrate,
     saturated_fat,
@@ -19,7 +20,8 @@ SELECT
         NULL,
         TIMESTAMP(
             DATETIME(date, PARSE_TIME('%H:%M', insulin_time)),
-            IFNULL(timezone, 'America/Los_Angeles'))) AS insulin_time,
+            IFNULL(timezone, 'America/Los_Angeles'))) AS insulin_timestamp,
+    PARSE_TIME('%H:%M', insulin_time) AS local_insulin_time,
 FROM `activity_tracker_dataset.meal_v3_raw`
 WHERE
     date IS NOT NULL;
