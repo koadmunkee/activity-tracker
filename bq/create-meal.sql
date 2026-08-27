@@ -4,6 +4,7 @@ SELECT
     TIMESTAMP(
         DATETIME(date, PARSE_TIME('%H:%M', time)),
         IFNULL(timezone, 'America/Los_Angeles')) AS meal_timestamp,
+    date AS local_meal_date,
     PARSE_TIME('%H:%M', time) AS local_meal_time,
     calorie,
     carbohydrate,
