@@ -8,6 +8,7 @@ SQL_FILES=(
     "create-blood_glucose_initial_dump.sql"
     "create-blood_glucose_delta.sql"
     "create-blood_glucose.sql"
+    "create-blood_glucose_daily_summary_pacific.sql"
     "create-meal_v1_raw.sql"
     "create-meal_v2_raw.sql"
     "create-meal_v3_raw.sql"
