@@ -13,6 +13,7 @@ SQL_FILES=(
     "create-meal_v2_raw.sql"
     "create-meal_v3_raw.sql"
     "create-meal.sql"
+    "create-meal_legacy.sql"
     "create-postprandial_glucose_3h.sql"
 )
 
