@@ -1,0 +1,14 @@
+# Build related - local configurations and transient files
+**/build/
+.cxx
+.externalNativeBuild
+.gradle
+
+# Other local configurations 
+.DS_Store
+.idea
+*.iml
+local.properties
+
+# Other transient files
+captures
