@@ -4,7 +4,7 @@ set -euo pipefail
 
 # Configuration
 SCOPE="https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly"
-REDIRECT_URI="urn:ietf:wg:oauth:2.0:oob"
+REDIRECT_URI="http://localhost"
 TOKEN_ENDPOINT="https://oauth2.googleapis.com/token"
 OUTPUT_FILE="googlehealth-oauth-credentials"
 CLIENT_ID="245829505646-0cqt84djp87ekhn0uebr0s6opdf6sofu.apps.googleusercontent.com"
