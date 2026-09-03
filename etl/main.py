@@ -9,8 +9,9 @@ import google.auth
 from datetime import timedelta
 from typing import Any, Dict, List
 
-SECRET_NAME = "googlehealth-oauth-credentials"
-CLIENT_ID = "245829505646-0cqt84djp87ekhn0uebr0s6opdf6sofu.apps.googleusercontent.com"
+CLIENT_SECRET_NAME = f"projects/245829505646/secrets/oauth-client-secret/versions/latest"
+REFRESH_TOKEN_SECRET_NAME = f"projects/245829505646/secrets/googlehealth-refresh-token/versions/latest"
+CLIENT_ID = "245829505646-3as2mtft1uu7j4kr0h2f1gkp2vchslui.apps.googleusercontent.com"
 DATASET_ID = "activity_tracker_dataset"
 TABLE_ID = "blood_glucose"
 BUCKET_NAME = "georgeruiz-activity-tracker"
@@ -51,15 +52,14 @@ def upload_to_gcs_csv(data: List[Dict[str, Any]], file_name) -> None:
 def get_oauth_credentials() -> Credentials:
     sm_client = secretmanager.SecretManagerServiceClient()
     _, project_id = google.auth.default()
-    name = f"projects/{project_id}/secrets/{SECRET_NAME}/versions/latest"
 
-    response = sm_client.access_secret_version(request={"name": name})
-    secret_payload = json.loads(response.payload.data.decode("UTF-8"))
+    client_secret = sm_client.access_secret_version(request={"name": CLIENT_SECRET_NAME})
+    refresh_token = sm_client.access_secret_version(request={"name": REFRESH_TOKEN_SECRET_NAME})
 
     return Credentials(
         token=None,
-        refresh_token=secret_payload["refresh_token"],
-        client_secret=secret_payload["client_secret"],
+        refresh_token=refresh_token.payload.data.decode("UTF-8"),
+        client_secret=client_secret.payload.data.decode("UTF-8"),
         client_id=CLIENT_ID,
         token_uri="https://oauth2.googleapis.com/token",
         scopes=["https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly"]
