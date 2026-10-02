@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Day & Meal Sticky Summaries -->
+    <!-- Day & Meal Aggregations Card -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,10 +37,19 @@
                 android:text="DAY TOTALS -> Cal: 0 | Dig.Carbs: 0g | Sat.Fat: 0g | Fat: 0g | Prot: 0g" />
 
             <TextView
-                android:id="@+id/txt_meal_totals"
+                android:id="@+id/txt_day_secondary_totals"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="10sp"
+                android:text="Day Secondary -> Fiber: 0g | Chol: 0mg | Total Carbs: 0g | Ω3: 0g | Ω6: 0g" />
+
+            <TextView
+                android:id="@+id/txt_meal_totals"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:textColor="?attr/colorOnPrimaryContainer"
                 android:textSize="12sp"
                 android:text="MEAL TOTALS -> Cal: 0 | Dig.Carbs: 0g | Sat.Fat: 0g | Fat: 0g | Prot: 0g" />
@@ -52,11 +61,11 @@
                 android:layout_marginTop="2dp"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="10sp"
-                android:text="Secondary: Fiber: 0g | Chol: 0mg | Carbs: 0g | Ω3: 0g | Ω6: 0g" />
+                android:text="Meal Secondary -> Fiber: 0g | Chol: 0mg | Total Carbs: 0g | Ω3: 0g | Ω6: 0g" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Navigation Bar between uncommitted meals -->
+    <!-- Meal Switcher Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -100,11 +109,12 @@
             android:orientation="vertical"
             android:padding="8dp">
 
-            <!-- Fast Auto-Fill options -->
+            <!-- Template & Copy Action Bar -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="2">
 
                 <Button
                     android:id="@+id/btn_populate_recent"
@@ -113,7 +123,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="4dp"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:text="Copy Previous" />
 
                 <Button
@@ -123,11 +133,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="4dp"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
+                    android:visibility="visible"
                     android:text="From Template" />
             </LinearLayout>
 
-            <!-- Meal Details -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -177,7 +187,6 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-            <!-- Food Rows -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_food_rows"
                 android:layout_width="match_parent"

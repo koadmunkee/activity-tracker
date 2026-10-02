@@ -32,7 +32,9 @@
                     android:id="@+id/auto_complete_food"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoComplete" />
+                    android:inputType="textAutoComplete"
+                    android:textColor="?attr/colorOnSurface"
+                    android:popupBackground="?attr/colorSurface" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -48,7 +50,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
-                    android:inputType="numberDecimal" />
+                    android:inputType="numberDecimal"
+                    android:textColor="?attr/colorOnSurface" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageButton
@@ -61,14 +64,24 @@
                 app:tint="@color/md_theme_error" />
         </LinearLayout>
 
-        <!-- Food-level Nutrient Rollup -->
+        <!-- Primary Nutrients -->
         <TextView
-            android:id="@+id/txt_food_nutrients"
+            android:id="@+id/txt_food_primary_nutrients"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="11sp"
-            android:text="Cal: 0 | Dig. Carbs: 0g | Sat Fat: 0g | Fat: 0g | Prot: 0g" />
+            android:text="Cal: 0 | Dig.Carbs: 0g | Sat Fat: 0g | Fat: 0g | Prot: 0g" />
+
+        <!-- Secondary Nutrients -->
+        <TextView
+            android:id="@+id/txt_food_secondary_nutrients"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="10sp"
+            android:text="Fiber: 0g | Chol: 0mg | Carbs: 0g | Ω3: 0g | Ω6: 0g" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

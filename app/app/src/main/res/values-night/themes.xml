@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.ActivityTracker" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#70F7F2</item>
+        <item name="colorOnPrimary">#003735</item>
+        <item name="colorPrimaryContainer">#00504E</item>
+        <item name="colorOnPrimaryContainer">#70F7F2</item>
+        <item name="colorSecondary">#B0CCC9</item>
+        <item name="colorOnSecondary">#1B3534</item>
+        <item name="colorSecondaryContainer">#324B4A</item>
+        <item name="colorOnSecondaryContainer">#CCE8E6</item>
+        <item name="android:colorBackground">#0E1414</item>
+        <item name="colorSurface">#0E1414</item>
+        <item name="colorOnSurface">#E0E3E2</item>
+        <item name="colorSurfaceVariant">#3F4948</item>
+        <item name="colorOnSurfaceVariant">#BEC9C8</item>
+    </style>
+</resources>

@@ -41,18 +41,28 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/txt_template_nutrients"
+        android:id="@+id/txt_template_primary_nutrients"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textColor="?attr/colorPrimary"
         android:textStyle="bold"
-        android:text="Template Rollup -> Cal: 0 | Dig.Carbs: 0g" />
+        android:textSize="12sp"
+        android:text="Template Primary -> Cal: 0 | Dig.Carbs: 0g | Sat Fat: 0g | Fat: 0g | Prot: 0g" />
+
+    <TextView
+        android:id="@+id/txt_template_secondary_nutrients"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="11sp"
+        android:text="Template Secondary -> Fiber: 0g | Chol: 0mg | Total Carbs: 0g | Ω3: 0g | Ω6: 0g" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_template_food_rows"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="180dp"
         android:layout_marginTop="8dp" />
 
     <Button

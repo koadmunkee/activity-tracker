@@ -19,6 +19,7 @@ import java.util.Locale;
 public class TemplateAdapter extends RecyclerView.Adapter<TemplateAdapter.ViewHolder> {
 
     public interface OnTemplateClickListener {
+        void onEditClick(MealTemplate template);
         void onDeleteClick(MealTemplate template);
     }
 
@@ -46,6 +47,10 @@ public class TemplateAdapter extends RecyclerView.Adapter<TemplateAdapter.ViewHo
         holder.txtInfo.setText(String.format(Locale.US, "Items: %d | Insulin Default: %.1f U",
                 t.getItems().size(), t.getInsulinDosage()));
 
+        holder.btnEdit.setOnClickListener(v -> {
+            if (listener != null) listener.onEditClick(t);
+        });
+
         holder.btnDelete.setOnClickListener(v -> {
             if (listener != null) listener.onDeleteClick(t);
         });
@@ -58,12 +63,13 @@ public class TemplateAdapter extends RecyclerView.Adapter<TemplateAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtTitle, txtInfo;
-        Button btnDelete;
+        Button btnEdit, btnDelete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.txt_template_title);
             txtInfo = itemView.findViewById(R.id.txt_template_info);
+            btnEdit = itemView.findViewById(R.id.btn_edit_template);
             btnDelete = itemView.findViewById(R.id.btn_delete_template);
         }
     }

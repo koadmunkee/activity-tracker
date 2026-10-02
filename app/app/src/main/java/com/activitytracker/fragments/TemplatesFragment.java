@@ -30,7 +30,7 @@ public class TemplatesFragment extends Fragment implements FoodRowAdapter.OnRowC
 
     private DatabaseHelper dbHelper;
     private TextInputEditText editTemplateName, editTemplateInsulin;
-    private TextView txtNutrients;
+    private TextView txtPrimaryNutrients, txtSecondaryNutrients;
     private RecyclerView recyclerFoodRows, recyclerSavedTemplates;
 
     private List<FoodWeightPair> templateItems = new ArrayList<>();
@@ -45,7 +45,8 @@ public class TemplatesFragment extends Fragment implements FoodRowAdapter.OnRowC
 
         editTemplateName = view.findViewById(R.id.edit_template_name);
         editTemplateInsulin = view.findViewById(R.id.edit_template_insulin);
-        txtNutrients = view.findViewById(R.id.txt_template_nutrients);
+        txtPrimaryNutrients = view.findViewById(R.id.txt_template_primary_nutrients);
+        txtSecondaryNutrients = view.findViewById(R.id.txt_template_secondary_nutrients);
 
         recyclerFoodRows = view.findViewById(R.id.recycler_template_food_rows);
         recyclerFoodRows.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -71,9 +72,27 @@ public class TemplatesFragment extends Fragment implements FoodRowAdapter.OnRowC
     }
 
     private void setupSavedTemplatesAdapter() {
-        templateAdapter = new TemplateAdapter(getContext(), dbHelper.getTemplates(), template -> {
-            dbHelper.deleteTemplate(template);
-            templateAdapter.notifyDataSetChanged();
+        templateAdapter = new TemplateAdapter(getContext(), dbHelper.getTemplates(), new TemplateAdapter.OnTemplateClickListener() {
+            @Override
+            public void onEditClick(MealTemplate template) {
+                editTemplateName.setText(template.getTemplateName());
+                editTemplateInsulin.setText(template.getInsulinDosage() > 0 ? String.valueOf(template.getInsulinDosage()) : "");
+
+                templateItems.clear();
+                for (FoodWeightPair p : template.getItems()) {
+                    templateItems.add(new FoodWeightPair(p.getFoodItem(), p.getWeightGrams()));
+                }
+
+                foodAdapter.notifyDataSetChanged();
+                updateRollup();
+                Toast.makeText(getContext(), "Loaded " + template.getTemplateName() + " for editing", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onDeleteClick(MealTemplate template) {
+                dbHelper.deleteTemplate(template);
+                templateAdapter.notifyDataSetChanged();
+            }
         });
         recyclerSavedTemplates.setAdapter(templateAdapter);
     }
@@ -106,12 +125,30 @@ public class TemplatesFragment extends Fragment implements FoodRowAdapter.OnRowC
     }
 
     private void updateRollup() {
-        double cal = 0, digCarbs = 0;
+        double cal = 0, digCarbs = 0, satFat = 0, fat = 0, protein = 0;
+        double fiber = 0, chol = 0, totalCarbs = 0, omega3 = 0, omega6 = 0;
+
         for (FoodWeightPair p : templateItems) {
             cal += p.getCalories();
             digCarbs += p.getDigestibleCarbs();
+            satFat += p.getSaturatedFat();
+            fat += p.getTotalFat();
+            protein += p.getProtein();
+
+            fiber += p.getFiber();
+            chol += p.getCholesterol();
+            totalCarbs += p.getTotalCarbs();
+            omega3 += p.getOmega3();
+            omega6 += p.getOmega6();
         }
-        txtNutrients.setText(String.format(Locale.US, "Template Rollup -> Cal: %.0f | Dig.Carbs: %.1fg", cal, digCarbs));
+
+        txtPrimaryNutrients.setText(String.format(Locale.US,
+                "Template Primary -> Cal: %.0f | Dig.Carbs: %.1fg | Sat Fat: %.1fg | Fat: %.1fg | Prot: %.1fg",
+                cal, digCarbs, satFat, fat, protein));
+
+        txtSecondaryNutrients.setText(String.format(Locale.US,
+                "Template Secondary -> Fiber: %.1fg | Chol: %.0fmg | Total Carbs: %.1fg | Ω3: %.2fg | Ω6: %.2fg",
+                fiber, chol, totalCarbs, omega3, omega6));
     }
 
     @Override

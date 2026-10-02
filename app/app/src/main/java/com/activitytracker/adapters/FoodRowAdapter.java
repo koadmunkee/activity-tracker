@@ -1,8 +1,6 @@
 package com.activitytracker.adapters;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,7 +68,6 @@ public class FoodRowAdapter extends RecyclerView.Adapter<FoodRowAdapter.ViewHold
 
         updateNutrientText(holder, pair);
 
-        // Autocomplete Listener
         holder.autoCompleteFood.setOnItemClickListener((parent, view, pos, id) -> {
             FoodItem selected = (FoodItem) parent.getItemAtPosition(pos);
             pair.setFoodItem(selected);
@@ -78,14 +75,12 @@ public class FoodRowAdapter extends RecyclerView.Adapter<FoodRowAdapter.ViewHold
             if (listener != null) listener.onRowChanged();
         });
 
-        // Focus Loss requirement for Weight Input updates
         holder.editWeight.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 commitWeightChange(holder, pair);
             }
         });
 
-        // Keyboard "Done/Enter" action trigger
         holder.editWeight.setOnEditorActionListener((v, actionId, event) -> {
             commitWeightChange(holder, pair);
             holder.editWeight.clearFocus();
@@ -113,9 +108,13 @@ public class FoodRowAdapter extends RecyclerView.Adapter<FoodRowAdapter.ViewHold
     }
 
     private void updateNutrientText(ViewHolder holder, FoodWeightPair pair) {
-        holder.txtNutrients.setText(String.format(Locale.US,
+        holder.txtPrimaryNutrients.setText(String.format(Locale.US,
                 "Cal: %.0f | Dig.Carbs: %.1fg | Sat Fat: %.1fg | Fat: %.1fg | Prot: %.1fg",
                 pair.getCalories(), pair.getDigestibleCarbs(), pair.getSaturatedFat(), pair.getTotalFat(), pair.getProtein()));
+
+        holder.txtSecondaryNutrients.setText(String.format(Locale.US,
+                "Fiber: %.1fg | Chol: %.0fmg | Total Carbs: %.1fg | Ω3: %.2fg | Ω6: %.2fg",
+                pair.getFiber(), pair.getCholesterol(), pair.getTotalCarbs(), pair.getOmega3(), pair.getOmega6()));
     }
 
     @Override
@@ -127,14 +126,15 @@ public class FoodRowAdapter extends RecyclerView.Adapter<FoodRowAdapter.ViewHold
         AutoCompleteTextView autoCompleteFood;
         TextInputEditText editWeight;
         ImageButton btnRemove;
-        TextView txtNutrients;
+        TextView txtPrimaryNutrients, txtSecondaryNutrients;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             autoCompleteFood = itemView.findViewById(R.id.auto_complete_food);
             editWeight = itemView.findViewById(R.id.edit_text_weight);
             btnRemove = itemView.findViewById(R.id.btn_remove_row);
-            txtNutrients = itemView.findViewById(R.id.txt_food_nutrients);
+            txtPrimaryNutrients = itemView.findViewById(R.id.txt_food_primary_nutrients);
+            txtSecondaryNutrients = itemView.findViewById(R.id.txt_food_secondary_nutrients);
         }
     }
 }
