@@ -1,127 +1,204 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <!-- Day & Meal Sticky Summaries -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="12dp">
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="?attr/colorPrimaryContainer">
 
-        <!-- Preset Population Options -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2"
-            android:layout_marginBottom="8dp">
-
-            <Button
-                android:id="@+id/btnPopulateLast"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Copy Last Meal" />
-
-            <Button
-                android:id="@+id/btnPopulateTemplate"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Apply Template" />
-        </LinearLayout>
-
-        <!-- Meal Details -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3"
-            android:layout_marginBottom="8dp">
-
-            <EditText
-                android:id="@+id/editMealTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Meal Time"
-                android:textSize="13sp" />
-
-            <EditText
-                android:id="@+id/editInsulinDosage"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Insulin (Units)"
-                android:inputType="numberDecimal"
-                android:textSize="13sp" />
-
-            <EditText
-                android:id="@+id/editInsulinTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Insulin Time"
-                android:textSize="13sp" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Food &amp; Weight List"
-            android:textStyle="bold"
-            android:textSize="14sp" />
-
-        <!-- Dynamic Food Rows Container -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerFoodPairs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginBottom="8dp" />
-
-        <Button
-            android:id="@+id/btnAddFoodRow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="+ Add Food"
-            style="?android:attr/buttonStyleSmall" />
-
-        <!-- Meal Aggregations -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="8dp"
-            android:background="#999999"
-            android:layout_marginTop="12dp">
+            android:padding="12dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Meal Primary Aggregates"
+                android:text="Aggregations"
                 android:textStyle="bold"
-                android:textColor="#2E7D32" />
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/textMealPrimaryNutrients"
+                android:id="@+id/txt_day_totals"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cal: 0 | Dig.Carbs: 0g | Sat.Fat: 0g | Fat: 0g | Pro: 0g"
-                android:textSize="13sp" />
+                android:layout_marginTop="4dp"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textSize="12sp"
+                android:text="DAY TOTALS -> Cal: 0 | Dig.Carbs: 0g | Sat.Fat: 0g | Fat: 0g | Prot: 0g" />
 
             <TextView
-                android:id="@+id/textMealSecondaryNutrients"
+                android:id="@+id/txt_meal_totals"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Fiber: 0g | Chol: 0mg | Carbs: 0g | O-3: 0g | O-6: 0g"
-                android:textSize="11sp"
-                android:textColor="#555555" />
+                android:layout_marginTop="2dp"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textSize="12sp"
+                android:text="MEAL TOTALS -> Cal: 0 | Dig.Carbs: 0g | Sat.Fat: 0g | Fat: 0g | Prot: 0g" />
+
+            <TextView
+                android:id="@+id/txt_secondary_nutrients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="10sp"
+                android:text="Secondary: Fiber: 0g | Chol: 0mg | Carbs: 0g | Ω3: 0g | Ω6: 0g" />
         </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
+    <!-- Navigation Bar between uncommitted meals -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp">
+
+        <Button
+            android:id="@+id/btn_prev_meal"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="&lt;" />
+
+        <TextView
+            android:id="@+id/txt_current_meal_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Meal 1 of 4: Breakfast"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btn_next_meal"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="&gt;" />
     </LinearLayout>
-</ScrollView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <!-- Fast Auto-Fill options -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_populate_recent"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:textSize="11sp"
+                    android:text="Copy Previous" />
+
+                <Button
+                    android:id="@+id/btn_populate_template"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:textSize="11sp"
+                    android:text="From Template" />
+            </LinearLayout>
+
+            <!-- Meal Details -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Meal Start Time">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_meal_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:hint="Insulin (Units)">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_insulin_dosage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:hint="Insulin Time">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_insulin_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- Food Rows -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_food_rows"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false" />
+
+            <Button
+                android:id="@+id/btn_add_food_row"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="+ Add Food Item" />
+
+            <Button
+                android:id="@+id/btn_commit_meal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Commit Meal" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

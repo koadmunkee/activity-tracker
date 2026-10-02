@@ -11,7 +11,7 @@
         android:theme="@style/Theme.ActivityTracker">
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -19,17 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.ConfigurationActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
-            android:name=".ui.TemplateEditorActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
     </application>
 
 </manifest>

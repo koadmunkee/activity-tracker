@@ -1,67 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_root"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:titleTextColor="@android:color/white"
-        app:title="Meal Planner" />
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabMode="scrollable" />
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- Day Aggregation Panel -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp"
-        android:background="#999999">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Day Total Nutrient Aggregation"
-            android:textStyle="bold"
-            android:textColor="#006064" />
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/textDayPrimaryNutrients"
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cal: 0 | Dig.Carbs: 0g | Sat.Fat: 0g | Fat: 0g | Pro: 0g"
-            android:textSize="13sp" />
-
-        <TextView
-            android:id="@+id/textDaySecondaryNutrients"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Fiber: 0g | Chol: 0mg | Carbs: 0g | O-3: 0g | O-6: 0g"
-            android:textSize="11sp"
-            android:textColor="#444444" />
-
-        <Button
-            android:id="@+id/btnCommitDay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Commit All Day's Meals"
-            android:layout_marginTop="4dp" />
+            android:background="?attr/colorSurface"
+            app:menu="@menu/bottom_nav_menu" />
     </LinearLayout>
-
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
