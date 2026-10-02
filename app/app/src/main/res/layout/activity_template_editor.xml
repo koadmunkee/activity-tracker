@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/template_editor_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Template Details"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTemplateName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Template Unique Name" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerTemplatePairs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/btnAddTemplateFoodRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+ Add Food"
+            style="?android:attr/buttonStyleSmall" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:background="#999999"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Template Aggregated Nutrients"
+                android:textStyle="bold"
+                android:textColor="#2E7D32" />
+
+            <TextView
+                android:id="@+id/textTemplatePrimaryNutrients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cal: 0 | Dig.Carbs: 0g | Sat.Fat: 0g | Fat: 0g | Pro: 0g" />
+
+            <TextView
+                android:id="@+id/textTemplateSecondaryNutrients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fiber: 0g | Chol: 0mg | Carbs: 0g | O-3: 0g | O-6: 0g"
+                android:textSize="11sp"
+                android:textColor="#555555" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSaveTemplate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Template"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>

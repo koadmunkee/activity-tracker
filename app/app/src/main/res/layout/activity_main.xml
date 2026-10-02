@@ -1,113 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/main_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F7">
+    android:orientation="vertical">
 
-    <!-- Top Action Bar -->
-    <TextView
-        android:id="@+id/tvDateHeader"
-        android:layout_width="0dp"
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:titleTextColor="@android:color/white"
+        app:title="Meal Planner" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Aug 29, 2026"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnAddMeal"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:tabMode="scrollable" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnAddMeal"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Day Aggregation Panel -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="+ Add Meal"
-        app:layout_constraintBottom_toBottomOf="@+id/tvDateHeader"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvDateHeader" />
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:background="#999999">
 
-    <!-- Day Totals Card -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardDayTotals"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDateHeader">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Day Total Nutrient Aggregation"
+            android:textStyle="bold"
+            android:textColor="#006064" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/textDayPrimaryNutrients"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:background="@color/cardview_light_background">
+            android:text="Cal: 0 | Dig.Carbs: 0g | Sat.Fat: 0g | Fat: 0g | Pro: 0g"
+            android:textSize="13sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DAY TOTALS"
-                android:textColor="#757575"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/textDaySecondaryNutrients"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fiber: 0g | Chol: 0mg | Carbs: 0g | O-3: 0g | O-6: 0g"
+            android:textSize="11sp"
+            android:textColor="#444444" />
 
-            <!-- Primary Macros -->
-            <TextView
-                android:id="@+id/tvDayPrimaryMacros"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:textColor="#000000"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                tools:text="2,450 kcal  |  210g Net Carb  |  95g Pro  |  65g Fat  |  18g Sat Fat" />
+        <Button
+            android:id="@+id/btnCommitDay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Commit All Day's Meals"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
 
-            <!-- Secondary Macros (Collapsible Target) -->
-            <TextView
-                android:id="@+id/tvDaySecondaryMacros"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:textColor="#616161"
-                android:textSize="12sp"
-                android:visibility="gone"
-                tools:text="Fiber: 32g  |  Chol: 215mg  |  Total Carb: 242g  |  Omega-3: 2.1g  |  Omega-6: 12g"
-                tools:visibility="visible" />
-
-            <TextView
-                android:id="@+id/btnToggleDaySecondary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="#1E88E5"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:text="Show Secondary Macros ▼" />
-
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- RecyclerView for Meals -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvMeals"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:clipToPadding="false"
-        android:paddingBottom="80dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardDayTotals"
-        tools:listitem="@layout/item_meal_card" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

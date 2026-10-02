@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Preset Population Options -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginBottom="8dp">
+
+            <Button
+                android:id="@+id/btnPopulateLast"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Copy Last Meal" />
+
+            <Button
+                android:id="@+id/btnPopulateTemplate"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Apply Template" />
+        </LinearLayout>
+
+        <!-- Meal Details -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/editMealTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Meal Time"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/editInsulinDosage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Insulin (Units)"
+                android:inputType="numberDecimal"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/editInsulinTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Insulin Time"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Food &amp; Weight List"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+
+        <!-- Dynamic Food Rows Container -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerFoodPairs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnAddFoodRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+ Add Food"
+            style="?android:attr/buttonStyleSmall" />
+
+        <!-- Meal Aggregations -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:background="#999999"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Meal Primary Aggregates"
+                android:textStyle="bold"
+                android:textColor="#2E7D32" />
+
+            <TextView
+                android:id="@+id/textMealPrimaryNutrients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cal: 0 | Dig.Carbs: 0g | Sat.Fat: 0g | Fat: 0g | Pro: 0g"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/textMealSecondaryNutrients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fiber: 0g | Chol: 0mg | Carbs: 0g | O-3: 0g | O-6: 0g"
+                android:textSize="11sp"
+                android:textColor="#555555" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
