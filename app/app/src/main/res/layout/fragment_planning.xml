@@ -22,20 +22,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Meal Selector Tabs -->
+        <!-- Meal Selector Tabs & Add Ad Hoc Meal (FR 2.9) -->
         <HorizontalScrollView
             android:id="@+id/scroll_meal_tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="none">
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_meals"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:selectionRequired="true"
-                app:singleLine="true"
-                app:singleSelection="true" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_meals"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleLine="true"
+                    app:singleSelection="true" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add_ad_hoc_meal"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/add_ad_hoc_meal"
+                    android:textSize="12sp"
+                    app:icon="@drawable/ic_add"
+                    app:iconSize="14dp" />
+            </LinearLayout>
         </HorizontalScrollView>
 
         <!-- Pinned Day & Meal Aggregation Card (FR 2.4: Always visible) -->
@@ -175,13 +195,55 @@
                     android:orientation="vertical"
                     android:padding="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Meal Timings &amp; Insulin Dosage"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/text_meal_section_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Meal Timings &amp; Insulin Dosage"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/text_ad_hoc_badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_badge_ad_hoc"
+                            android:paddingStart="8dp"
+                            android:paddingTop="2dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="2dp"
+                            android:text="@string/ad_hoc_badge"
+                            android:textColor="@color/clinical_amber"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:visibility="gone" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_delete_ad_hoc_meal"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"
+                            android:text="@string/delete_ad_hoc_meal"
+                            android:textColor="@color/clinical_coral"
+                            android:textSize="11sp"
+                            android:visibility="gone"
+                            app:icon="@drawable/ic_delete"
+                            app:iconSize="14dp"
+                            app:iconTint="@color/clinical_coral" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -284,6 +346,20 @@
                     app:icon="@drawable/ic_template"
                     app:iconSize="16dp" />
             </LinearLayout>
+ 
+            <TextView
+                android:id="@+id/text_ad_hoc_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-4dp"
+                android:layout_marginBottom="8dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:text="@string/ad_hoc_cannot_populate_prior_day"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="11sp"
+                android:textStyle="italic"
+                android:visibility="gone" />
 
             <!-- Food Rows Section Header & Add Button (FR 2.2) -->
             <LinearLayout

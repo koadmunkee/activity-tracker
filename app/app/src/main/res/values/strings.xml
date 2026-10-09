@@ -30,6 +30,17 @@
     <string name="no_recent_meal_found">No previously committed meal found for \"%1$s\".</string>
     <string name="select_template_title">Choose a Template</string>
 
+    <!-- Ad Hoc Meals (FR 2.9) -->
+    <string name="add_ad_hoc_meal">+ Ad Hoc Meal</string>
+    <string name="dialog_add_ad_hoc_title">Add Ad Hoc Meal</string>
+    <string name="dialog_add_ad_hoc_hint">Meal Name (e.g. Afternoon Snack)</string>
+    <string name="delete_ad_hoc_meal">Remove Meal</string>
+    <string name="confirm_delete_ad_hoc_meal">Are you sure you want to remove ad hoc meal \"%1$s\" from the current plan?</string>
+    <string name="ad_hoc_badge">Ad Hoc</string>
+    <string name="ad_hoc_cannot_populate_prior_day">Ad hoc meals cannot be populated from a prior day (FR 2.9).</string>
+    <string name="ad_hoc_meal_added">Ad hoc meal \"%1$s\" added.</string>
+    <string name="ad_hoc_meal_deleted">Ad hoc meal \"%1$s\" removed.</string>
+
     <!-- Aggregations -->
     <string name="aggregation_day_title">Day Total Aggregation</string>
     <string name="aggregation_meal_title">Meal Aggregation (%1$s)</string>

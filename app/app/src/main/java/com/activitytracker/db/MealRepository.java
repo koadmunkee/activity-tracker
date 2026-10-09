@@ -32,29 +32,40 @@ public class MealRepository {
      */
     public synchronized List<PlannedMeal> getUncommittedMeals(List<String> configuredMealNames) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        List<PlannedMeal> meals = loadMealsFromDb("is_committed = 0", null, "meal_order ASC");
+        List<PlannedMeal> meals = loadMealsFromDb("is_committed = 0", null, "meal_order ASC, id ASC");
 
-        if (meals.isEmpty() && configuredMealNames != null && !configuredMealNames.isEmpty()) {
-            for (int i = 0; i < configuredMealNames.size(); i++) {
-                String name = configuredMealNames.get(i);
-                ContentValues cv = new ContentValues();
-                cv.put(DatabaseHelper.COL_MEAL_NAME, name);
-                cv.put(DatabaseHelper.COL_MEAL_ORDER, i);
-                cv.put(DatabaseHelper.COL_MEAL_START_TIME, "");
-                cv.put(DatabaseHelper.COL_MEAL_INSULIN_DOSE, 0.0);
-                cv.put(DatabaseHelper.COL_MEAL_INSULIN_TIME, "");
-                cv.put(DatabaseHelper.COL_MEAL_IS_COMMITTED, 0);
-                long newId = db.insert(DatabaseHelper.TABLE_MEALS, null, cv);
+        if (configuredMealNames != null && !configuredMealNames.isEmpty()) {
+            boolean hasRegularMeals = false;
+            for (PlannedMeal m : meals) {
+                if (!m.isAdHoc()) {
+                    hasRegularMeals = true;
+                    break;
+                }
+            }
 
-                PlannedMeal meal = new PlannedMeal(newId, null, name, i, "", 0.0, "", false);
-                meals.add(meal);
+            if (!hasRegularMeals) {
+                for (int i = 0; i < configuredMealNames.size(); i++) {
+                    String name = configuredMealNames.get(i);
+                    ContentValues cv = new ContentValues();
+                    cv.put(DatabaseHelper.COL_MEAL_NAME, name);
+                    cv.put(DatabaseHelper.COL_MEAL_ORDER, i);
+                    cv.put(DatabaseHelper.COL_MEAL_START_TIME, "");
+                    cv.put(DatabaseHelper.COL_MEAL_INSULIN_DOSE, 0.0);
+                    cv.put(DatabaseHelper.COL_MEAL_INSULIN_TIME, "");
+                    cv.put(DatabaseHelper.COL_MEAL_IS_COMMITTED, 0);
+                    cv.put(DatabaseHelper.COL_MEAL_IS_AD_HOC, 0);
+                    long newId = db.insert(DatabaseHelper.TABLE_MEALS, null, cv);
+
+                    PlannedMeal meal = new PlannedMeal(newId, null, name, i, "", 0.0, "", false, false);
+                    meals.add(meal);
+                }
             }
         }
         return meals;
     }
 
     /**
-     * Saves changes to a meal (timings, insulin, and food/weight item rows).
+     * Saves changes to a meal (timings, insulin, food/weight item rows, ad-hoc status).
      */
     public synchronized void saveOrUpdateMeal(PlannedMeal meal) {
         if (meal == null) return;
@@ -68,6 +79,7 @@ public class MealRepository {
             cv.put(DatabaseHelper.COL_MEAL_INSULIN_DOSE, meal.getInsulinDose());
             cv.put(DatabaseHelper.COL_MEAL_INSULIN_TIME, meal.getInsulinTime());
             cv.put(DatabaseHelper.COL_MEAL_IS_COMMITTED, meal.isCommitted() ? 1 : 0);
+            cv.put(DatabaseHelper.COL_MEAL_IS_AD_HOC, meal.isAdHoc() ? 1 : 0);
             if (meal.getDate() != null) {
                 cv.put(DatabaseHelper.COL_MEAL_DATE, meal.getDate());
             }
@@ -115,6 +127,7 @@ public class MealRepository {
                 ContentValues cv = new ContentValues();
                 cv.put(DatabaseHelper.COL_MEAL_DATE, date);
                 cv.put(DatabaseHelper.COL_MEAL_IS_COMMITTED, 1);
+                cv.put(DatabaseHelper.COL_MEAL_IS_AD_HOC, meal.isAdHoc() ? 1 : 0);
                 cv.put(DatabaseHelper.COL_MEAL_START_TIME, meal.getStartTime());
                 cv.put(DatabaseHelper.COL_MEAL_INSULIN_DOSE, meal.getInsulinDose());
                 cv.put(DatabaseHelper.COL_MEAL_INSULIN_TIME, meal.getInsulinTime());
@@ -143,13 +156,65 @@ public class MealRepository {
 
     /**
      * Retrieves the most recently committed meal matching the given meal name (FR 2.6).
+     * FR 2.9: Ad hoc meals cannot be populated from a prior day.
      */
     public synchronized PlannedMeal getMostRecentCommittedMealByName(String mealName) {
         if (mealName == null) return null;
-        String selection = "is_committed = 1 AND meal_name = ? COLLATE NOCASE";
+        String selection = "is_committed = 1 AND is_ad_hoc = 0 AND meal_name = ? COLLATE NOCASE";
         String[] selectionArgs = new String[]{mealName.trim()};
         List<PlannedMeal> meals = loadMealsFromDb(selection, selectionArgs, "date DESC, id DESC LIMIT 1");
         return meals.isEmpty() ? null : meals.get(0);
+    }
+
+    /**
+     * Creates and adds an ad hoc meal to the current plan (FR 2.9).
+     */
+    public synchronized PlannedMeal createAdHocMeal(String mealName) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        if (mealName == null || mealName.trim().isEmpty()) {
+            mealName = "Ad Hoc Meal";
+        }
+        mealName = mealName.trim();
+
+        int maxOrder = 0;
+        Cursor cursor = db.rawQuery("SELECT MAX(" + DatabaseHelper.COL_MEAL_ORDER + ") FROM "
+                + DatabaseHelper.TABLE_MEALS + " WHERE is_committed = 0", null);
+        if (cursor != null) {
+            if (cursor.moveToNext()) {
+                maxOrder = cursor.getInt(0) + 1;
+            }
+            cursor.close();
+        }
+
+        ContentValues cv = new ContentValues();
+        cv.put(DatabaseHelper.COL_MEAL_NAME, mealName);
+        cv.put(DatabaseHelper.COL_MEAL_ORDER, maxOrder);
+        cv.put(DatabaseHelper.COL_MEAL_START_TIME, "");
+        cv.put(DatabaseHelper.COL_MEAL_INSULIN_DOSE, 0.0);
+        cv.put(DatabaseHelper.COL_MEAL_INSULIN_TIME, "");
+        cv.put(DatabaseHelper.COL_MEAL_IS_COMMITTED, 0);
+        cv.put(DatabaseHelper.COL_MEAL_IS_AD_HOC, 1);
+        long newId = db.insert(DatabaseHelper.TABLE_MEALS, null, cv);
+
+        return new PlannedMeal(newId, null, mealName, maxOrder, "", 0.0, "", false, true);
+    }
+
+    /**
+     * Deletes a meal and its items by ID (e.g. removing an uncommitted ad hoc meal).
+     */
+    public synchronized boolean deleteMeal(long mealId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            db.delete(DatabaseHelper.TABLE_MEAL_ITEMS,
+                    DatabaseHelper.COL_ITEM_MEAL_ID + " = ?", new String[]{String.valueOf(mealId)});
+            int rows = db.delete(DatabaseHelper.TABLE_MEALS,
+                    DatabaseHelper.COL_MEAL_ID + " = ?", new String[]{String.valueOf(mealId)});
+            db.setTransactionSuccessful();
+            return rows > 0;
+        } finally {
+            db.endTransaction();
+        }
     }
 
     /**
@@ -257,7 +322,10 @@ public class MealRepository {
                 String insulinTime = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_MEAL_INSULIN_TIME));
                 boolean committed = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_MEAL_IS_COMMITTED)) == 1;
 
-                PlannedMeal meal = new PlannedMeal(mealId, date, name, order, startTime, insulinDose, insulinTime, committed);
+                int adHocIndex = cursor.getColumnIndex(DatabaseHelper.COL_MEAL_IS_AD_HOC);
+                boolean isAdHoc = (adHocIndex != -1) && (cursor.getInt(adHocIndex) == 1);
+
+                PlannedMeal meal = new PlannedMeal(mealId, date, name, order, startTime, insulinDose, insulinTime, committed, isAdHoc);
 
                 // Load meal items
                 List<MealItem> items = loadMealItems(db, mealId);

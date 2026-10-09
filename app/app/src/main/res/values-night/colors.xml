@@ -39,6 +39,9 @@
     <color name="clinical_insulin_bg">#1C2541</color>
     <color name="clinical_time">#38D9A9</color>
     <color name="clinical_time_bg">#14382E</color>
+    <color name="clinical_amber">#FBBF24</color>
+    <color name="clinical_amber_bg">#452205</color>
+    <color name="clinical_coral">#FF6B6B</color>
 
     <!-- Macronutrient Badges for Dark Mode -->
     <color name="nutrient_calories">#FFA94D</color>

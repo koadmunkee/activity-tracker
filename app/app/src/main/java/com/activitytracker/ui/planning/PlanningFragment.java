@@ -9,6 +9,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +67,10 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
     private MaterialButton btnPopulateTemplate;
     private MaterialButton btnAddFoodRow;
     private MaterialButton btnCommitDay;
+    private MaterialButton btnAddAdHocMeal;
+    private MaterialButton btnDeleteAdHocMeal;
+    private TextView textAdHocBadge;
+    private TextView textAdHocNote;
 
     private RecyclerView recyclerFoodRows;
     private TextView textEmptyFoodRows;
@@ -119,6 +125,10 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
         btnPopulateTemplate = root.findViewById(R.id.btn_populate_template);
         btnAddFoodRow = root.findViewById(R.id.btn_add_food_row);
         btnCommitDay = root.findViewById(R.id.btn_commit_day);
+        btnAddAdHocMeal = root.findViewById(R.id.btn_add_ad_hoc_meal);
+        btnDeleteAdHocMeal = root.findViewById(R.id.btn_delete_ad_hoc_meal);
+        textAdHocBadge = root.findViewById(R.id.text_ad_hoc_badge);
+        textAdHocNote = root.findViewById(R.id.text_ad_hoc_note);
 
         recyclerFoodRows = root.findViewById(R.id.recycler_food_rows);
         textEmptyFoodRows = root.findViewById(R.id.text_empty_food_rows);
@@ -193,6 +203,16 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
 
         // Commit Day's Meals (FR 2.3 & FR 2.8)
         btnCommitDay.setOnClickListener(v -> handleCommitDaysMeals());
+
+        // Add Ad Hoc Meal (FR 2.9)
+        if (btnAddAdHocMeal != null) {
+            btnAddAdHocMeal.setOnClickListener(v -> showAddAdHocMealDialog());
+        }
+
+        // Delete Ad Hoc Meal (FR 2.9)
+        if (btnDeleteAdHocMeal != null) {
+            btnDeleteAdHocMeal.setOnClickListener(v -> confirmDeleteAdHocMeal());
+        }
     }
 
     public void loadPlanningData() {
@@ -216,15 +236,37 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
         for (int i = 0; i < uncommittedMeals.size(); i++) {
             PlannedMeal meal = uncommittedMeals.get(i);
             Chip chip = new Chip(requireContext());
-            chip.setText(meal.getMealName());
+            String title = meal.getMealName();
+            if (meal.isAdHoc()) {
+                title += " (" + getString(R.string.ad_hoc_badge) + ")";
+            }
+            chip.setText(title);
             chip.setCheckable(true);
+            chip.setTag(meal.getId());
             chip.setId(View.generateViewId());
             final PlannedMeal targetMeal = meal;
             chip.setOnClickListener(v -> selectMeal(targetMeal));
             chipGroupMeals.addView(chip);
 
-            if (i == 0) {
+            if (activeMeal != null && activeMeal.getId() == meal.getId()) {
                 chip.setChecked(true);
+            } else if (activeMeal == null && i == 0) {
+                chip.setChecked(true);
+            }
+        }
+    }
+
+    private void selectChipForMeal(PlannedMeal meal) {
+        if (meal == null) return;
+        for (int i = 0; i < chipGroupMeals.getChildCount(); i++) {
+            View child = chipGroupMeals.getChildAt(i);
+            if (child instanceof Chip) {
+                Chip chip = (Chip) child;
+                Object tag = chip.getTag();
+                if (tag instanceof Long && (Long) tag == meal.getId()) {
+                    chip.setChecked(true);
+                    break;
+                }
             }
         }
     }
@@ -233,7 +275,34 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
         this.activeMeal = meal;
         isUpdatingUi = true;
 
-        btnPopulateLastMeal.setText(String.format(Locale.US, "Copy Last %s", meal.getMealName()));
+        if (meal == null) {
+            if (textAdHocBadge != null) textAdHocBadge.setVisibility(View.GONE);
+            if (btnDeleteAdHocMeal != null) btnDeleteAdHocMeal.setVisibility(View.GONE);
+            if (textAdHocNote != null) textAdHocNote.setVisibility(View.GONE);
+            updateEmptyState();
+            updateAggregationCards();
+            isUpdatingUi = false;
+            return;
+        }
+
+        // FR 2.9: Ad hoc meals cannot be populated from a prior day, but can be from templates.
+        if (meal.isAdHoc()) {
+            if (textAdHocBadge != null) textAdHocBadge.setVisibility(View.VISIBLE);
+            if (btnDeleteAdHocMeal != null) btnDeleteAdHocMeal.setVisibility(View.VISIBLE);
+            btnPopulateLastMeal.setEnabled(false);
+            btnPopulateLastMeal.setAlpha(0.45f);
+            btnPopulateLastMeal.setText(String.format(Locale.US, "Copy Last %s", meal.getMealName()));
+            if (textAdHocNote != null) textAdHocNote.setVisibility(View.VISIBLE);
+        } else {
+            if (textAdHocBadge != null) textAdHocBadge.setVisibility(View.GONE);
+            if (btnDeleteAdHocMeal != null) btnDeleteAdHocMeal.setVisibility(View.GONE);
+            btnPopulateLastMeal.setEnabled(true);
+            btnPopulateLastMeal.setAlpha(1.0f);
+            btnPopulateLastMeal.setText(String.format(Locale.US, "Copy Last %s", meal.getMealName()));
+            if (textAdHocNote != null) textAdHocNote.setVisibility(View.GONE);
+        }
+        btnPopulateTemplate.setEnabled(true);
+
         textMealAggregationLabel.setText(String.format(Locale.US, "MEAL TOTAL (%s):", meal.getMealName()));
 
         etMealStartTime.setText(meal.getStartTime());
@@ -336,6 +405,10 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
      */
     private void populateFromMostRecentCommittedMeal() {
         if (activeMeal == null) return;
+        if (activeMeal.isAdHoc()) {
+            Snackbar.make(requireView(), R.string.ad_hoc_cannot_populate_prior_day, Snackbar.LENGTH_LONG).show();
+            return;
+        }
         PlannedMeal lastCommitted = mealRepository.getMostRecentCommittedMealByName(activeMeal.getMealName());
         if (lastCommitted == null) {
             Snackbar.make(requireView(),
@@ -467,6 +540,71 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
         Snackbar.make(requireView(),
                 String.format(getString(R.string.commit_success), DateTimeUtil.formatDisplayDate(date)),
                 Snackbar.LENGTH_LONG).show();
+    }
+
+    /**
+     * FR 2.9: Adds an ad hoc meal to the current plan.
+     */
+    private void showAddAdHocMealDialog() {
+        final Context context = requireContext();
+        EditText input = new EditText(context);
+        input.setHint(R.string.dialog_add_ad_hoc_hint);
+        input.setSingleLine(true);
+        int pad = (int) (16 * getResources().getDisplayMetrics().density);
+        FrameLayout container = new FrameLayout(context);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = pad;
+        params.rightMargin = pad;
+        input.setLayoutParams(params);
+        container.addView(input);
+
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.dialog_add_ad_hoc_title)
+                .setView(container)
+                .setPositiveButton(R.string.action_save, (dialog, which) -> {
+                    String name = input.getText().toString().trim();
+                    if (name.isEmpty()) {
+                        name = "Ad Hoc Meal";
+                    }
+                    PlannedMeal newMeal = mealRepository.createAdHocMeal(name);
+                    uncommittedMeals.add(newMeal);
+                    setupMealSelectorTabs();
+                    selectMeal(newMeal);
+                    selectChipForMeal(newMeal);
+                    Snackbar.make(requireView(),
+                            String.format(getString(R.string.ad_hoc_meal_added), newMeal.getMealName()),
+                            Snackbar.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
+    }
+
+    /**
+     * FR 2.9: Deletes the currently selected ad hoc meal from the plan.
+     */
+    private void confirmDeleteAdHocMeal() {
+        if (activeMeal == null || !activeMeal.isAdHoc()) return;
+        final PlannedMeal mealToDelete = activeMeal;
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.delete_ad_hoc_meal)
+                .setMessage(String.format(getString(R.string.confirm_delete_ad_hoc_meal), mealToDelete.getMealName()))
+                .setPositiveButton(R.string.action_delete, (dialog, which) -> {
+                    mealRepository.deleteMeal(mealToDelete.getId());
+                    uncommittedMeals.remove(mealToDelete);
+                    Snackbar.make(requireView(),
+                            String.format(getString(R.string.ad_hoc_meal_deleted), mealToDelete.getMealName()),
+                            Snackbar.LENGTH_SHORT).show();
+                    setupMealSelectorTabs();
+                    if (!uncommittedMeals.isEmpty()) {
+                        selectMeal(uncommittedMeals.get(0));
+                        selectChipForMeal(uncommittedMeals.get(0));
+                    } else {
+                        selectMeal(null);
+                    }
+                })
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
     }
 
     private interface OnTimeSelectedListener {

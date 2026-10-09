@@ -16,6 +16,7 @@ public class PlannedMeal implements Serializable {
     private double insulinDose; // Insulin amount in units
     private String insulinTime; // "HH:mm" or "hh:mm a"
     private boolean isCommitted;
+    private boolean isAdHoc; // Special ad hoc meal (FR 2.9)
     private List<MealItem> items = new ArrayList<>();
 
     public PlannedMeal() {
@@ -23,12 +24,19 @@ public class PlannedMeal implements Serializable {
         this.insulinTime = "";
         this.insulinDose = 0.0;
         this.isCommitted = false;
+        this.isAdHoc = false;
         this.items = new ArrayList<>();
     }
 
     public PlannedMeal(long id, String date, String mealName, int mealOrder,
                        String startTime, double insulinDose, String insulinTime,
                        boolean isCommitted) {
+        this(id, date, mealName, mealOrder, startTime, insulinDose, insulinTime, isCommitted, false);
+    }
+
+    public PlannedMeal(long id, String date, String mealName, int mealOrder,
+                       String startTime, double insulinDose, String insulinTime,
+                       boolean isCommitted, boolean isAdHoc) {
         this.id = id;
         this.date = date;
         this.mealName = mealName != null ? mealName : "";
@@ -37,6 +45,7 @@ public class PlannedMeal implements Serializable {
         this.insulinDose = insulinDose;
         this.insulinTime = insulinTime != null ? insulinTime : "";
         this.isCommitted = isCommitted;
+        this.isAdHoc = isAdHoc;
         this.items = new ArrayList<>();
     }
 
@@ -63,6 +72,9 @@ public class PlannedMeal implements Serializable {
 
     public boolean isCommitted() { return isCommitted; }
     public void setCommitted(boolean committed) { isCommitted = committed; }
+
+    public boolean isAdHoc() { return isAdHoc; }
+    public void setAdHoc(boolean adHoc) { isAdHoc = adHoc; }
 
     public List<MealItem> getItems() { return items; }
     public void setItems(List<MealItem> items) {

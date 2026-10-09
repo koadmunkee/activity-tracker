@@ -119,7 +119,11 @@ public class HistoryDayAdapter extends RecyclerView.Adapter<HistoryDayAdapter.Da
                 TextView textMealSecondary = mealView.findViewById(R.id.text_hist_meal_secondary);
                 TextView textMealItems = mealView.findViewById(R.id.text_hist_meal_items);
 
-                textMealName.setText(meal.getMealName());
+                String displayName = meal.getMealName();
+                if (meal.isAdHoc()) {
+                    displayName += " (" + context.getString(R.string.ad_hoc_badge) + ")";
+                }
+                textMealName.setText(displayName);
                 textMealTime.setText(meal.getStartTime().isEmpty() ? "Time not set" : meal.getStartTime());
 
                 String insulinDesc = String.format(Locale.US, "Insulin: %.1f units", meal.getInsulinDose());

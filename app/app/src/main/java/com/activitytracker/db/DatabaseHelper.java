@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "activity_tracker.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Table names
     public static final String TABLE_FOODS = "foods";
@@ -46,6 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_MEAL_INSULIN_DOSE = "insulin_dose";
     public static final String COL_MEAL_INSULIN_TIME = "insulin_time";
     public static final String COL_MEAL_IS_COMMITTED = "is_committed";
+    public static final String COL_MEAL_IS_AD_HOC = "is_ad_hoc";
 
     // Column names for Meal Items
     public static final String COL_ITEM_ID = "id";
@@ -112,7 +113,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COL_MEAL_START_TIME + " TEXT, "
                 + COL_MEAL_INSULIN_DOSE + " REAL DEFAULT 0.0, "
                 + COL_MEAL_INSULIN_TIME + " TEXT, "
-                + COL_MEAL_IS_COMMITTED + " INTEGER NOT NULL DEFAULT 0)");
+                + COL_MEAL_IS_COMMITTED + " INTEGER NOT NULL DEFAULT 0, "
+                + COL_MEAL_IS_AD_HOC + " INTEGER NOT NULL DEFAULT 0)");
 
         // Create Meal Items table
         db.execSQL("CREATE TABLE " + TABLE_MEAL_ITEMS + " ("
@@ -152,14 +154,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Database migration if needed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEAL_CONFIGS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEMPLATE_ITEMS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEMPLATES);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEAL_ITEMS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEALS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FOODS);
-        onCreate(db);
+        if (oldVersion < 2) {
+            try {
+                db.execSQL("ALTER TABLE " + TABLE_MEALS + " ADD COLUMN " + COL_MEAL_IS_AD_HOC + " INTEGER NOT NULL DEFAULT 0");
+            } catch (Exception ignored) {}
+        }
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        try {
+            db.execSQL("ALTER TABLE " + TABLE_MEALS + " ADD COLUMN " + COL_MEAL_IS_AD_HOC + " INTEGER NOT NULL DEFAULT 0");
+        } catch (Exception ignored) {}
     }
 
     private void seedDefaultMealConfigs(SQLiteDatabase db) {
