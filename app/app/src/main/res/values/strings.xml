@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Activity Tracker</string>
+
+    <!-- Navigation -->
+    <string name="nav_planning">Planning</string>
+    <string name="nav_history">History</string>
+    <string name="nav_templates">Templates</string>
+    <string name="nav_foods">Foods</string>
+    <string name="nav_settings">Config</string>
+
+    <!-- Planning View -->
+    <string name="title_planning">Meal Planning</string>
+    <string name="uncommitted_badge">Uncommitted</string>
+    <string name="committed_badge">Committed</string>
+    <string name="meal_start_time">Meal Start</string>
+    <string name="insulin_dose">Insulin (units)</string>
+    <string name="insulin_time">Insulin Time</string>
+    <string name="add_food_row">+ Add Food</string>
+    <string name="commit_day_meals">Commit Day\'s Meals</string>
+    <string name="populate_from_last">Populate from Last %1$s</string>
+    <string name="populate_from_template">Populate from Template</string>
+    <string name="prompt_commit_date_title">Commit Day\'s Meals</string>
+    <string name="prompt_commit_date_msg">Select the date to associate with these meals. Once committed, they cannot be modified unless adjusted from History.</string>
+    <string name="commit_success">Successfully committed meals for %1$s</string>
+    <string name="error_commit_validation">Cannot commit: Please fix errors. %1$s</string>
+    <string name="no_uncommitted_meals">All configured meals for today have been committed or none are set up.</string>
+    <string name="food_hint">Search food…</string>
+    <string name="weight_hint">Weight (g)</string>
+    <string name="no_recent_meal_found">No previously committed meal found for \"%1$s\".</string>
+    <string name="select_template_title">Choose a Template</string>
+
+    <!-- Aggregations -->
+    <string name="aggregation_day_title">Day Total Aggregation</string>
+    <string name="aggregation_meal_title">Meal Aggregation (%1$s)</string>
+    <string name="primary_nutrients">Primary Nutrients</string>
+    <string name="secondary_nutrients">Secondary Nutrients</string>
+    <string name="label_calories">Calories</string>
+    <string name="label_digestable_carbs">Digest. Carbs</string>
+    <string name="label_saturated_fat">Sat. Fat</string>
+    <string name="label_fat">Total Fat</string>
+    <string name="label_protein">Protein</string>
+    <string name="label_fiber">Fiber</string>
+    <string name="label_cholesterol">Cholesterol</string>
+    <string name="label_carbohydrates">Total Carbs</string>
+    <string name="label_omega3">Omega-3</string>
+    <string name="label_omega6">Omega-6</string>
+
+    <!-- History View -->
+    <string name="title_history">Meal History</string>
+    <string name="empty_history">No committed meals found in history.</string>
+    <string name="adjust_day">Adjust Day</string>
+    <string name="adjust_day_confirm_title">Adjust Committed Day?</string>
+    <string name="adjust_day_confirm_msg">Adjusting %1$s will clear any current uncommitted food/weight pairs in the planning view, mark this day as uncommitted, and load its meals into the planning view for editing.</string>
+    <string name="adjust_day_success">Day %1$s is now open for adjustment in Planning.</string>
+
+    <!-- Template View -->
+    <string name="title_templates">Meal Templates</string>
+    <string name="create_template">Create Template</string>
+    <string name="edit_template">Edit Template</string>
+    <string name="delete_template">Delete Template</string>
+    <string name="template_name_hint">Template Name (e.g. High Protein Breakfast)</string>
+    <string name="empty_templates">No meal templates found. Tap + to create one.</string>
+    <string name="delete_template_confirm">Are you sure you want to delete template \"%1$s\"?</string>
+    <string name="error_template_validation">Cannot save template: %1$s</string>
+    <string name="template_saved">Template saved successfully.</string>
+    <string name="template_deleted">Template deleted.</string>
+
+    <!-- Foods View -->
+    <string name="title_foods">Food Library</string>
+    <string name="active_foods">Active Foods</string>
+    <string name="archived_foods">Archived Foods</string>
+    <string name="search_foods_hint">Search food library…</string>
+    <string name="add_food">Add Food</string>
+    <string name="edit_food">Edit Food</string>
+    <string name="archive_food">Archive Food</string>
+    <string name="unarchive_food">Unarchive Food</string>
+    <string name="archive_confirm_title">Archive Food?</string>
+    <string name="archive_confirm_msg">Are you sure you want to archive \"%1$s\"? Archiving hides it from the food list and prevents it from appearing in autocomplete selectors.</string>
+    <string name="food_archived">\"%1$s\" has been archived.</string>
+    <string name="food_unarchived">\"%1$s\" has been restored.</string>
+    <string name="empty_foods">No foods found in this section.</string>
+
+    <!-- Food Dialog Fields -->
+    <string name="field_food_name">Food Name</string>
+    <string name="field_reference_weight">Reference Weight (g)</string>
+    <string name="field_calories">Calories (kcal)</string>
+    <string name="field_digestable_carbs">Digestable Carbohydrates (g)</string>
+    <string name="field_saturated_fat">Saturated Fat (g)</string>
+    <string name="field_fat">Total Fat (g)</string>
+    <string name="field_protein">Protein (g)</string>
+    <string name="field_fiber">Fiber (g)</string>
+    <string name="field_cholesterol">Cholesterol (mg)</string>
+    <string name="field_carbohydrates">Total Carbohydrates (g)</string>
+    <string name="field_omega3">Omega-3 Fats (g)</string>
+    <string name="field_omega6">Omega-6 Fats (g)</string>
+    <string name="error_unique_food_name">A food with this name already exists. Food names must be unique.</string>
+    <string name="error_undefined_nutrients">All nutrient and weight fields must be defined with valid numbers.</string>
+
+    <!-- Configuration View -->
+    <string name="title_config">Configuration</string>
+    <string name="config_meal_count_label">Number of Meals in a Day:</string>
+    <string name="config_meal_names_label">Meal Names:</string>
+    <string name="meal_order_label">Meal %1$d</string>
+    <string name="save_config">Save Configuration</string>
+    <string name="config_saved">Meal configuration saved successfully.</string>
+    <string name="error_config_validation">Please provide a non-empty name for each meal.</string>
+
+    <!-- Common Actions -->
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_close">Close</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_select">Select</string>
+</resources>

@@ -15,7 +15,19 @@
 * **Functional requirement 2.5:** As the user in the planning view, I want to select from a configurable list of foods when updating food rows.
 * **Functional requirement 2.6:** As the user in the planning view, when planning a meal I want the option to populate its food & weight pairs and insulin dosage amount from the most recently committed meal with the same name.
 * **Functional requirement 2.7:** As the user in the planning view, when planning a meal I want the option to populate its food & weight pairs and insulin dosage amount from a template.
-* **Functional requiremnet 3.1:** As the user in the template view, I want to be able to create, edit and delete meal templates. The user should be able to assign the template a unique name. A meal template is comprised of food & weight pairs and and insulin dosage amount, exactly like a meal. While creating the template I want to see the primary and secondary nutrients for each food/weight pair. I also want to see the template level aggregation of primary and secondary nutrients.
+* **Functional requirement 2.8:** As the user in the planning view, I should not be allowed to commit the day's meals if any of them have unrecognized food or undefined weight.
+* **Functional requirement 3.1:** As the user in the template view, I want to be able to create, edit and delete meal templates. The user should be able to assign the template a unique name. A meal template is comprised of food & weight pairs and and insulin dosage amount, exactly like a meal. While creating the template I want to see the primary and secondary nutrients for each food/weight pair. I also want to see the template level aggregation of primary and secondary nutrients.
+* **Functional requirement 3.2:** As the user in the template view, I should not be allowed to submit a meal template that has unrecognized food or undefined weight.
+* **Functional requirement 4.1:** As the user in the history view, I want to see past meals that I have committed.
+* **Functional requirement 4.2:** As the user in the history view, I want to be able to adjust a day that I have committed. Doing this clears all food/weight pairs from the planning view, makes the selected day's meals uncommitted and opens the previously committed food/weight pairs for the day in the planning view.
+* **Functional requirement 5.1:** As the user in the food view, I want to view a list of unarchived foods.
+* **Functional requirement 5.2:** As the user in the food view, I want to archive a food. This should bring up a confirmation dialogue allowing the user to cancel or confirm the archival. Archiving a food hides it from the food list and prevents it from appearing in the planning and template view's food autocomplete selector.
+* **Functional requirement 5.3:** As the user in the food view, I want to the option of viewing archived foods.
+* **Functional requirement 5.4:** As the user in the food view, I want to edit an existing food. 
+* **Functional requirement 5.5:** As the user in the food view, editing or creating a new food should allow the user to specify values for weight, calories, digestable carbohydrates (total carbohydrates minus digestable fiber), saturated fat, fat, protein, fiber, cholesterol, carbohydrates, omega 3 fats, omega 6 fats.
+* **Functional requirement 5.6:** As the user in the food view, editing or creating a new food should allow the user to specify values for the food's name, weight, calories, digestable carbohydrates (total carbohydrates minus digestable fiber), saturated fat, fat, protein, fiber, cholesterol, carbohydrates, omega 3 fats, omega 6 fats.
+* **Functional requirement 5.7:** As the user in the food view, when attempting to submit either a food edit or new food, it should be required to have a unique name.
+* **Functional requirement 5.7:** As the user in the food view, when attempting to submit either a food edit or new food, I should not be allowed to have undefined values for any of the food's nutritients.
 
 ## Technical Constraints
 * Native android application written in Java. The root java directory should be com.activitytracker.

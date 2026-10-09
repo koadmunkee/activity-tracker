@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Clinical Vitality Dark Palette -->
+    <color name="md_theme_dark_primary">#4DD0E1</color>
+    <color name="md_theme_dark_onPrimary">#003737</color>
+    <color name="md_theme_dark_primaryContainer">#004F4F</color>
+    <color name="md_theme_dark_onPrimaryContainer">#6FF7F6</color>
+
+    <color name="md_theme_dark_secondary">#B1CCCD</color>
+    <color name="md_theme_dark_onSecondary">#1B3535</color>
+    <color name="md_theme_dark_secondaryContainer">#324C4C</color>
+    <color name="md_theme_dark_onSecondaryContainer">#CCE8E7</color>
+
+    <color name="md_theme_dark_tertiary">#B2C8E8</color>
+    <color name="md_theme_dark_onTertiary">#1C324C</color>
+    <color name="md_theme_dark_tertiaryContainer">#334963</color>
+    <color name="md_theme_dark_onTertiaryContainer">#D3E4FF</color>
+
+    <color name="md_theme_dark_error">#FFB4AB</color>
+    <color name="md_theme_dark_onError">#690005</color>
+    <color name="md_theme_dark_errorContainer">#93000A</color>
+    <color name="md_theme_dark_onErrorContainer">#FFDAD6</color>
+
+    <color name="md_theme_dark_background">#111617</color>
+    <color name="md_theme_dark_onBackground">#E0E3E2</color>
+    <color name="md_theme_dark_surface">#171E20</color>
+    <color name="md_theme_dark_onSurface">#E0E3E2</color>
+    <color name="md_theme_dark_surfaceVariant">#263336</color>
+    <color name="md_theme_dark_onSurfaceVariant">#BEC9C8</color>
+    <color name="md_theme_dark_outline">#899392</color>
+    <color name="md_theme_dark_outlineVariant">#3F4948</color>
+
+    <!-- Specific Health & Clinical Accent Colors -->
+    <color name="clinical_teal">#4DD0E1</color>
+    <color name="clinical_mint">#38D9A9</color>
+    <color name="clinical_card_bg">#1D2628</color>
+    <color name="clinical_card_stroke">#2D3C40</color>
+    <color name="clinical_insulin">#748FFC</color>
+    <color name="clinical_insulin_bg">#1C2541</color>
+    <color name="clinical_time">#38D9A9</color>
+    <color name="clinical_time_bg">#14382E</color>
+
+    <!-- Macronutrient Badges for Dark Mode -->
+    <color name="nutrient_calories">#FFA94D</color>
+    <color name="nutrient_calories_bg">#3D250C</color>
+    <color name="nutrient_carbs">#74C0FC</color>
+    <color name="nutrient_carbs_bg">#112A45</color>
+    <color name="nutrient_protein">#FF8787</color>
+    <color name="nutrient_protein_bg">#401616</color>
+    <color name="nutrient_fat">#FFD43B</color>
+    <color name="nutrient_fat_bg">#3E320A</color>
+    <color name="nutrient_sat_fat">#DA77F2</color>
+    <color name="nutrient_sat_fat_bg">#36123D</color>
+
+    <!-- Autocomplete item colors (Ensures crystal clear visibility in Dark Mode) -->
+    <color name="autocomplete_bg">#232E31</color>
+    <color name="autocomplete_text">#FFFFFF</color>
+    <color name="autocomplete_subtext">#A8B4B4</color>
+</resources>

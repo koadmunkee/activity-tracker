@@ -2,14 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_planning"
-        android:icon="@android:drawable/ic_menu_today"
-        android:title="Planning" />
+        android:icon="@drawable/ic_planning"
+        android:title="@string/nav_planning" />
+    <item
+        android:id="@+id/nav_history"
+        android:icon="@drawable/ic_history"
+        android:title="@string/nav_history" />
     <item
         android:id="@+id/nav_templates"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="Templates" />
+        android:icon="@drawable/ic_template"
+        android:title="@string/nav_templates" />
     <item
-        android:id="@+id/nav_config"
-        android:icon="@android:drawable/ic_menu_manage"
-        android:title="Config" />
+        android:id="@+id/nav_foods"
+        android:icon="@drawable/ic_food"
+        android:title="@string/nav_foods" />
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/nav_settings" />
 </menu>

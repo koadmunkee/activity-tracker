@@ -1,22 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Clinical Vitality Theme Palette -->
-    <color name="md_theme_primary">#006A67</color>
-    <color name="md_theme_onPrimary">#FFFFFF</color>
-    <color name="md_theme_primaryContainer">#70F7F2</color>
-    <color name="md_theme_onPrimaryContainer">#00201F</color>
-    
-    <color name="md_theme_secondary">#4A6362</color>
-    <color name="md_theme_onSecondary">#FFFFFF</color>
-    <color name="md_theme_secondaryContainer">#CCE8E6</color>
-    <color name="md_theme_onSecondaryContainer">#051F1E</color>
+    <!-- Clinical Vitality Light Palette -->
+    <color name="md_theme_light_primary">#006A6A</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#6FF7F6</color>
+    <color name="md_theme_light_onPrimaryContainer">#002020</color>
 
-    <color name="md_theme_surface">#FAFDFB</color>
-    <color name="md_theme_onSurface">#191C1C</color>
-    <color name="md_theme_surfaceVariant">#DAE5E4</color>
-    <color name="md_theme_onSurfaceVariant">#3F4948</color>
-    <color name="md_theme_background">#FAFDFB</color>
+    <color name="md_theme_light_secondary">#4A6363</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#CCE8E7</color>
+    <color name="md_theme_light_onSecondaryContainer">#051F20</color>
 
-    <color name="md_theme_error">#BA1A1A</color>
-    <color name="md_theme_onError">#FFFFFF</color>
+    <color name="md_theme_light_tertiary">#4B607C</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer">#D3E4FF</color>
+    <color name="md_theme_light_onTertiaryContainer">#041C35</color>
+
+    <color name="md_theme_light_error">#BA1A1A</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
+    <color name="md_theme_light_errorContainer">#FFDAD6</color>
+    <color name="md_theme_light_onErrorContainer">#410002</color>
+
+    <color name="md_theme_light_background">#FAFDFB</color>
+    <color name="md_theme_light_onBackground">#191C1C</color>
+    <color name="md_theme_light_surface">#FAFDFB</color>
+    <color name="md_theme_light_onSurface">#191C1C</color>
+    <color name="md_theme_light_surfaceVariant">#DAE5E4</color>
+    <color name="md_theme_light_onSurfaceVariant">#3F4948</color>
+    <color name="md_theme_light_outline">#6F7979</color>
+    <color name="md_theme_light_outlineVariant">#BEC9C8</color>
+
+    <!-- Specific Health & Clinical Accent Colors -->
+    <color name="clinical_teal">#007A87</color>
+    <color name="clinical_mint">#00A896</color>
+    <color name="clinical_card_bg">#FFFFFF</color>
+    <color name="clinical_card_stroke">#E0E7E7</color>
+    <color name="clinical_insulin">#4C6EF5</color>
+    <color name="clinical_insulin_bg">#EDF2FF</color>
+    <color name="clinical_time">#0CA678</color>
+    <color name="clinical_time_bg">#E6FCF5</color>
+
+    <!-- Macronutrient Badges -->
+    <color name="nutrient_calories">#D9480F</color>
+    <color name="nutrient_calories_bg">#FFF4E6</color>
+    <color name="nutrient_carbs">#1971C2</color>
+    <color name="nutrient_carbs_bg">#E7F5FF</color>
+    <color name="nutrient_protein">#C92A2A</color>
+    <color name="nutrient_protein_bg">#FFE3E3</color>
+    <color name="nutrient_fat">#E67700</color>
+    <color name="nutrient_fat_bg">#FFF9DB</color>
+    <color name="nutrient_sat_fat">#862E9C</color>
+    <color name="nutrient_sat_fat_bg">#F3D9FA</color>
+
+    <!-- Autocomplete item colors (Ensures crystal clear visibility in Light Mode) -->
+    <color name="autocomplete_bg">#FFFFFF</color>
+    <color name="autocomplete_text">#191C1C</color>
+    <color name="autocomplete_subtext">#5B6464</color>
 </resources>
