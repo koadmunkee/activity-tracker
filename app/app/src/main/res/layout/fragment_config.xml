@@ -72,8 +72,23 @@
                         android:insetTop="0dp"
                         android:insetRight="0dp"
                         android:insetBottom="0dp"
+                        android:padding="0dp"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="0dp"
+                        android:paddingLeft="0dp"
+                        android:paddingRight="0dp"
+                        android:paddingTop="0dp"
+                        android:paddingBottom="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:gravity="center"
+                        android:textAlignment="center"
+                        android:includeFontPadding="false"
                         android:text="-"
-                        android:textSize="18sp" />
+                        android:textColor="@color/selector_config_counter_btn"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:contentDescription="Decrease meal count" />
 
                     <!-- Count display -->
                     <TextView
@@ -96,8 +111,23 @@
                         android:insetTop="0dp"
                         android:insetRight="0dp"
                         android:insetBottom="0dp"
+                        android:padding="0dp"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="0dp"
+                        android:paddingLeft="0dp"
+                        android:paddingRight="0dp"
+                        android:paddingTop="0dp"
+                        android:paddingBottom="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:gravity="center"
+                        android:textAlignment="center"
+                        android:includeFontPadding="false"
                         android:text="+"
-                        android:textSize="18sp" />
+                        android:textColor="@color/selector_config_counter_btn"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:contentDescription="Increase meal count" />
                 </LinearLayout>
 
             </LinearLayout>
