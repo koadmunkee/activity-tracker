@@ -24,6 +24,8 @@
     <string name="prompt_commit_date_msg">Select the date to associate with these meals. Once committed, they cannot be modified unless adjusted from History.</string>
     <string name="commit_success">Successfully committed meals for %1$s</string>
     <string name="error_commit_validation">Cannot commit: Please fix errors. %1$s</string>
+    <string name="error_commit_missing_meal_time">\"%1$s\" has food recorded but does not define a meal start time.</string>
+    <string name="error_commit_missing_insulin_time">\"%1$s\" has non-zero insulin (%2$.1f units) but does not define an insulin dosage time.</string>
     <string name="no_uncommitted_meals">All configured meals for today have been committed or none are set up.</string>
     <string name="food_hint">Search food…</string>
     <string name="weight_hint">Weight (g)</string>

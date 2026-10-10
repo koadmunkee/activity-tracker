@@ -117,4 +117,32 @@ public class PlannedMeal implements Serializable {
         }
         return false;
     }
+
+    /**
+     * Checks if this meal has any food items recorded (FR 2.10).
+     */
+    public boolean hasFood() {
+        return items != null && !items.isEmpty();
+    }
+
+    /**
+     * Checks if this meal has food but is missing meal start time (FR 2.10).
+     */
+    public boolean hasMissingMealTime() {
+        return hasFood() && (startTime == null || startTime.trim().isEmpty());
+    }
+
+    /**
+     * Checks if this meal has non-zero insulin but is missing insulin dosage time (FR 2.11).
+     */
+    public boolean hasMissingInsulinTime() {
+        return insulinDose > 0 && (insulinTime == null || insulinTime.trim().isEmpty());
+    }
+
+    /**
+     * Validates this meal for commitment (FR 2.8, FR 2.10, FR 2.11).
+     */
+    public boolean isValidForCommit() {
+        return !hasInvalidItems() && !hasMissingMealTime() && !hasMissingInsulinTime();
+    }
 }

@@ -484,14 +484,17 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
     }
 
     /**
-     * FR 2.3 & FR 2.8: Committing the day's meals.
-     * Validates that all food rows have recognized food and defined weight.
+     * FR 2.3, FR 2.8, FR 2.10, FR 2.11: Committing the day's meals.
+     * Validates that all food rows have recognized food and defined weight (FR 2.8).
+     * Validates that if a meal has food it defines a meal start time (FR 2.10).
+     * Validates that if a meal has non-zero insulin it defines an insulin dosage time (FR 2.11).
      * Prompts for date associated with meals (defaulted to today).
      */
     private void handleCommitDaysMeals() {
-        // Validation check (FR 2.8)
+        // Validation check (FR 2.8, FR 2.10, FR 2.11)
         StringBuilder errorMsg = new StringBuilder();
         for (PlannedMeal meal : uncommittedMeals) {
+            // FR 2.8: Unrecognized food or undefined weight
             for (int i = 0; i < meal.getItems().size(); i++) {
                 MealItem item = meal.getItems().get(i);
                 if (item.getFoodItem() == null || item.getFoodItem().getId() <= 0) {
@@ -506,6 +509,20 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
                             .append(" row ").append(i + 1)
                             .append(" has undefined or zero weight.\n");
                 }
+            }
+
+            // FR 2.10: If a meal has food but does not define meal time
+            if (meal.hasMissingMealTime()) {
+                errorMsg.append("• ")
+                        .append(getString(R.string.error_commit_missing_meal_time, meal.getMealName()))
+                        .append("\n");
+            }
+
+            // FR 2.11: If a meal has non zero insulin but does not define insulin dosage time
+            if (meal.hasMissingInsulinTime()) {
+                errorMsg.append("• ")
+                        .append(getString(R.string.error_commit_missing_insulin_time, meal.getMealName(), meal.getInsulinDose()))
+                        .append("\n");
             }
         }
 
