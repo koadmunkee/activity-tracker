@@ -291,14 +291,16 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
             if (btnDeleteAdHocMeal != null) btnDeleteAdHocMeal.setVisibility(View.VISIBLE);
             btnPopulateLastMeal.setEnabled(false);
             btnPopulateLastMeal.setAlpha(0.45f);
-            btnPopulateLastMeal.setText(String.format(Locale.US, "Copy Last %s", meal.getMealName()));
+            btnPopulateLastMeal.setText(R.string.copy_last);
+            btnPopulateLastMeal.setContentDescription(String.format(Locale.US, "Copy Last %s", meal.getMealName()));
             if (textAdHocNote != null) textAdHocNote.setVisibility(View.VISIBLE);
         } else {
             if (textAdHocBadge != null) textAdHocBadge.setVisibility(View.GONE);
             if (btnDeleteAdHocMeal != null) btnDeleteAdHocMeal.setVisibility(View.GONE);
             btnPopulateLastMeal.setEnabled(true);
             btnPopulateLastMeal.setAlpha(1.0f);
-            btnPopulateLastMeal.setText(String.format(Locale.US, "Copy Last %s", meal.getMealName()));
+            btnPopulateLastMeal.setText(R.string.copy_last);
+            btnPopulateLastMeal.setContentDescription(String.format(Locale.US, "Copy Last %s", meal.getMealName()));
             if (textAdHocNote != null) textAdHocNote.setVisibility(View.GONE);
         }
         btnPopulateTemplate.setEnabled(true);

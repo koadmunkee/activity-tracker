@@ -18,6 +18,9 @@
     <string name="insulin_time">Insulin Time</string>
     <string name="add_food_row">+ Add Food</string>
     <string name="commit_day_meals">Commit Day\'s Meals</string>
+    <string name="commit_action">Commit</string>
+    <string name="copy_last">Copy Last</string>
+    <string name="load_template">Template</string>
     <string name="populate_from_last">Populate from Last %1$s</string>
     <string name="populate_from_template">Populate from Template</string>
     <string name="prompt_commit_date_title">Commit Day\'s Meals</string>
