@@ -15,7 +15,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_tpl_food_name"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -25,6 +25,12 @@
                 android:id="@+id/actv_tpl_food_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="42dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="12dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:gravity="center_vertical"
                 android:completionThreshold="1"
                 android:inputType="textCapWords"
                 android:maxLines="1"
@@ -35,8 +41,8 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_tpl_food_weight"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="85dp"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:hint="@string/weight_hint">
@@ -45,6 +51,12 @@
                 android:id="@+id/et_tpl_food_weight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="42dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:gravity="center_vertical"
                 android:imeOptions="actionDone"
                 android:inputType="numberDecimal"
                 android:maxLines="1"
