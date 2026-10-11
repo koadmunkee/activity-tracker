@@ -26,7 +26,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNav;
-    private MaterialToolbar toolbar;
+    //private MaterialToolbar toolbar;
     private PlanningFragment planningFragment;
     private HistoryFragment historyFragment;
     private TemplatesFragment templatesFragment;
@@ -39,9 +39,6 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        toolbar = findViewById(R.id.top_toolbar);
-        setSupportActionBar(toolbar);
 
         bottomNav = findViewById(R.id.bottom_navigation);
 

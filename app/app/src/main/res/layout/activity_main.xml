@@ -16,13 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/top_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="@string/app_name"
-            app:titleTextColor="?attr/colorOnSurface"
-            app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Fragment container strictly positioned between the top app bar and the bottom navigation bar -->
