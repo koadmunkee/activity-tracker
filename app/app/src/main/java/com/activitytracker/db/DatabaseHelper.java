@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "activity_tracker.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
 
     // Table names
     public static final String TABLE_FOODS = "foods";
@@ -36,6 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_FOOD_OMEGA3 = "omega3";
     public static final String COL_FOOD_OMEGA6 = "omega6";
     public static final String COL_FOOD_IS_ARCHIVED = "is_archived";
+    public static final String COL_FOOD_VERSION = "version";
 
     // Column names for Meals
     public static final String COL_MEAL_ID = "id";
@@ -102,7 +103,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COL_FOOD_CARBS + " REAL NOT NULL, "
                 + COL_FOOD_OMEGA3 + " REAL NOT NULL, "
                 + COL_FOOD_OMEGA6 + " REAL NOT NULL, "
-                + COL_FOOD_IS_ARCHIVED + " INTEGER NOT NULL DEFAULT 0)");
+                + COL_FOOD_IS_ARCHIVED + " INTEGER NOT NULL DEFAULT 0, "
+                + COL_FOOD_VERSION + " INTEGER NOT NULL DEFAULT 0)");
 
         // Create Meals table
         db.execSQL("CREATE TABLE " + TABLE_MEALS + " ("
@@ -147,26 +149,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COL_CONFIG_NAME + " TEXT NOT NULL)");
 
         // Seed initial data
-        seedInitialFoods(db);
         seedDefaultMealConfigs(db);
         seedInitialTemplates(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 2) {
-            try {
-                db.execSQL("ALTER TABLE " + TABLE_MEALS + " ADD COLUMN " + COL_MEAL_IS_AD_HOC + " INTEGER NOT NULL DEFAULT 0");
-            } catch (Exception ignored) {}
-        }
-    }
-
-    @Override
-    public void onOpen(SQLiteDatabase db) {
-        super.onOpen(db);
-        try {
-            db.execSQL("ALTER TABLE " + TABLE_MEALS + " ADD COLUMN " + COL_MEAL_IS_AD_HOC + " INTEGER NOT NULL DEFAULT 0");
-        } catch (Exception ignored) {}
     }
 
     private void seedDefaultMealConfigs(SQLiteDatabase db) {
@@ -177,44 +165,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cv.put(COL_CONFIG_NAME, defaultMeals[i]);
             db.insert(TABLE_MEAL_CONFIGS, null, cv);
         }
-    }
-
-    private void seedInitialFoods(SQLiteDatabase db) {
-        insertSeedFood(db, "Chicken Breast (Cooked)", 100, 165, 0.0, 1.0, 3.6, 31.0, 0.0, 85, 0.0, 0.07, 0.58);
-        insertSeedFood(db, "Brown Rice (Cooked)", 100, 111, 21.2, 0.2, 0.9, 2.6, 1.8, 0, 23.0, 0.03, 0.31);
-        insertSeedFood(db, "Broccoli (Steamed)", 100, 35, 3.9, 0.1, 0.4, 2.4, 3.3, 0, 7.2, 0.09, 0.05);
-        insertSeedFood(db, "Whole Egg (Large, Cooked)", 50, 78, 0.6, 1.6, 5.3, 6.3, 0.0, 186, 0.6, 0.04, 0.57);
-        insertSeedFood(db, "Oatmeal (Rolled Oats, Dry)", 100, 389, 55.7, 1.2, 6.9, 16.9, 10.6, 0, 66.3, 0.11, 2.42);
-        insertSeedFood(db, "Atlantic Salmon (Cooked)", 100, 206, 0.0, 3.1, 12.3, 22.1, 0.0, 63, 0.0, 2.26, 0.67);
-        insertSeedFood(db, "Avocado", 100, 160, 1.8, 2.1, 14.7, 2.0, 6.7, 0, 8.5, 0.11, 1.69);
-        insertSeedFood(db, "Greek Yogurt (Nonfat, Plain)", 100, 59, 3.6, 0.1, 0.4, 10.2, 0.0, 5, 3.6, 0.01, 0.02);
-        insertSeedFood(db, "Olive Oil (Extra Virgin)", 14, 119, 0.0, 1.9, 13.5, 0.0, 0.0, 0, 0.0, 0.10, 1.32);
-        insertSeedFood(db, "Sweet Potato (Baked)", 100, 90, 17.4, 0.1, 0.2, 2.0, 3.3, 0, 20.7, 0.02, 0.03);
-        insertSeedFood(db, "Almonds", 100, 579, 9.1, 3.8, 49.9, 21.2, 12.5, 0, 21.6, 0.01, 12.05);
-        insertSeedFood(db, "Apple (Medium with skin)", 100, 52, 11.4, 0.03, 0.17, 0.26, 2.4, 0, 13.8, 0.01, 0.04);
-        insertSeedFood(db, "Spinach (Raw)", 100, 23, 1.4, 0.06, 0.39, 2.86, 2.2, 0, 3.6, 0.14, 0.03);
-        insertSeedFood(db, "Whey Protein Powder", 30, 120, 2.0, 0.5, 1.5, 24.0, 1.0, 35, 3.0, 0.05, 0.10);
-        insertSeedFood(db, "Whole Wheat Bread", 100, 247, 35.3, 0.7, 3.4, 13.0, 6.0, 0, 41.3, 0.14, 1.22);
-    }
-
-    private void insertSeedFood(SQLiteDatabase db, String name, double refWeight, double cal,
-                                double digCarbs, double satFat, double fat, double protein,
-                                double fiber, double chol, double carbs, double om3, double om6) {
-        ContentValues cv = new ContentValues();
-        cv.put(COL_FOOD_NAME, name);
-        cv.put(COL_FOOD_REF_WEIGHT, refWeight);
-        cv.put(COL_FOOD_CALORIES, cal);
-        cv.put(COL_FOOD_DIGESTABLE_CARBS, digCarbs);
-        cv.put(COL_FOOD_SAT_FAT, satFat);
-        cv.put(COL_FOOD_FAT, fat);
-        cv.put(COL_FOOD_PROTEIN, protein);
-        cv.put(COL_FOOD_FIBER, fiber);
-        cv.put(COL_FOOD_CHOLESTEROL, chol);
-        cv.put(COL_FOOD_CARBS, carbs);
-        cv.put(COL_FOOD_OMEGA3, om3);
-        cv.put(COL_FOOD_OMEGA6, om6);
-        cv.put(COL_FOOD_IS_ARCHIVED, 0);
-        db.insert(TABLE_FOODS, null, cv);
     }
 
     private void seedInitialTemplates(SQLiteDatabase db) {

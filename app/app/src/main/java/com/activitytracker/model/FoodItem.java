@@ -20,16 +20,26 @@ public class FoodItem implements Serializable {
     private double omega3;
     private double omega6;
     private boolean isArchived;
+    private int version = 1;
 
     public FoodItem() {
         this.referenceWeight = 100.0;
         this.isArchived = false;
+        this.version = 1;
     }
 
     public FoodItem(long id, String name, double referenceWeight, double calories,
                     double digestableCarbs, double saturatedFat, double fat, double protein,
                     double fiber, double cholesterol, double carbohydrates, double omega3,
                     double omega6, boolean isArchived) {
+        this(id, name, referenceWeight, calories, digestableCarbs, saturatedFat, fat, protein,
+                fiber, cholesterol, carbohydrates, omega3, omega6, isArchived, 1);
+    }
+
+    public FoodItem(long id, String name, double referenceWeight, double calories,
+                    double digestableCarbs, double saturatedFat, double fat, double protein,
+                    double fiber, double cholesterol, double carbohydrates, double omega3,
+                    double omega6, boolean isArchived, int version) {
         this.id = id;
         this.name = name != null ? name.trim() : "";
         this.referenceWeight = referenceWeight > 0 ? referenceWeight : 100.0;
@@ -44,6 +54,7 @@ public class FoodItem implements Serializable {
         this.omega3 = omega3;
         this.omega6 = omega6;
         this.isArchived = isArchived;
+        this.version = version;
     }
 
     public long getId() { return id; }
@@ -87,6 +98,9 @@ public class FoodItem implements Serializable {
 
     public boolean isArchived() { return isArchived; }
     public void setArchived(boolean archived) { isArchived = archived; }
+
+    public int getVersion() { return version; }
+    public void setVersion(int version) { this.version = version; }
 
     /**
      * Compute nutrients for a given weight using the food's reference weight.

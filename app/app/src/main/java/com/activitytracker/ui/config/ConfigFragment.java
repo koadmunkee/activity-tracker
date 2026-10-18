@@ -16,13 +16,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.activitytracker.R;
 import com.activitytracker.db.ConfigRepository;
+import com.activitytracker.db.FoodRepository;
+import com.activitytracker.sync.FoodLibrarySynchronizer;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Configuration View - enables defining the number of meals in a day and custom names (FR 1.1).
+ * Configuration View - enables defining the number of meals in a day and custom names (FR 1.1),
+ * as well as synchronizing the food library with the master food library from Google Sheets (FR 1.2).
  */
 public class ConfigFragment extends Fragment {
 
@@ -32,6 +36,13 @@ public class ConfigFragment extends Fragment {
     private RecyclerView recyclerMealConfigs;
     private TextView textError;
     private MaterialButton btnSave;
+
+    // Food library synchronization UI (FR 1.2)
+    private TextInputEditText etSyncUrl;
+    private MaterialButton btnSync;
+    private View progressSync;
+    private TextView textSyncStatus;
+    private FoodLibrarySynchronizer synchronizer;
 
     private ConfigRepository configRepository;
     private final List<String> currentMealNames = new ArrayList<>();
@@ -68,6 +79,23 @@ public class ConfigFragment extends Fragment {
         btnDecrease.setOnClickListener(v -> decreaseMealCount());
         btnIncrease.setOnClickListener(v -> increaseMealCount());
         btnSave.setOnClickListener(v -> saveConfiguration());
+
+        // Setup master food library sync (FR 1.2)
+        FoodRepository foodRepository = new FoodRepository(context);
+        synchronizer = new FoodLibrarySynchronizer(foodRepository);
+
+        etSyncUrl = view.findViewById(R.id.et_sync_url);
+        btnSync = view.findViewById(R.id.btn_sync_food_library);
+        progressSync = view.findViewById(R.id.progress_sync);
+        textSyncStatus = view.findViewById(R.id.text_sync_status);
+
+        if (etSyncUrl != null && (etSyncUrl.getText() == null || etSyncUrl.getText().toString().trim().isEmpty())) {
+            etSyncUrl.setText(FoodLibrarySynchronizer.DEFAULT_MASTER_URL);
+        }
+
+        if (btnSync != null) {
+            btnSync.setOnClickListener(v -> startFoodSync());
+        }
 
         loadConfiguration();
     }
@@ -128,6 +156,60 @@ public class ConfigFragment extends Fragment {
 
         configRepository.saveConfiguredMealNames(currentMealNames);
         Toast.makeText(requireContext(), R.string.config_saved, Toast.LENGTH_SHORT).show();
+    }
+
+    private void startFoodSync() {
+        String url = (etSyncUrl != null && etSyncUrl.getText() != null)
+                ? etSyncUrl.getText().toString().trim()
+                : FoodLibrarySynchronizer.DEFAULT_MASTER_URL;
+        if (url.isEmpty()) {
+            url = FoodLibrarySynchronizer.DEFAULT_MASTER_URL;
+            if (etSyncUrl != null) etSyncUrl.setText(url);
+        }
+
+        if (btnSync != null) btnSync.setEnabled(false);
+        if (progressSync != null) progressSync.setVisibility(View.VISIBLE);
+        if (textSyncStatus != null) {
+            textSyncStatus.setVisibility(View.VISIBLE);
+            textSyncStatus.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.clinical_teal));
+            textSyncStatus.setText(R.string.sync_in_progress);
+        }
+
+        synchronizer.syncFromUrlAsync(url, new FoodLibrarySynchronizer.SyncCallback() {
+            @Override
+            public void onProgress(String message) {
+                if (isAdded() && textSyncStatus != null) {
+                    textSyncStatus.setText(message);
+                }
+            }
+
+            @Override
+            public void onSuccess(FoodLibrarySynchronizer.SyncResult result) {
+                if (!isAdded()) return;
+                if (btnSync != null) btnSync.setEnabled(true);
+                if (progressSync != null) progressSync.setVisibility(View.GONE);
+                String successMsg = getString(R.string.sync_success,
+                        result.addedCount, result.updatedCount, result.unchangedCount);
+                if (textSyncStatus != null) {
+                    textSyncStatus.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.clinical_teal));
+                    textSyncStatus.setText(successMsg);
+                }
+                Toast.makeText(requireContext(), successMsg, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                if (!isAdded()) return;
+                if (btnSync != null) btnSync.setEnabled(true);
+                if (progressSync != null) progressSync.setVisibility(View.GONE);
+                String errorMsg = getString(R.string.sync_error, errorMessage);
+                if (textSyncStatus != null) {
+                    textSyncStatus.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.clinical_coral));
+                    textSyncStatus.setText(errorMsg);
+                }
+                Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

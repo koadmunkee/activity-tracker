@@ -20,7 +20,7 @@
     <string name="commit_day_meals">Commit Day\'s Meals</string>
     <string name="commit_action">Commit</string>
     <string name="copy_last">Copy Last</string>
-    <string name="load_template">Template</string>
+    <string name="load_template">Load Template</string>
     <string name="populate_from_last">Populate from Last %1$s</string>
     <string name="populate_from_template">Populate from Template</string>
     <string name="prompt_commit_date_title">Commit Day\'s Meals</string>
@@ -121,6 +121,15 @@
     <string name="save_config">Save Configuration</string>
     <string name="config_saved">Meal configuration saved successfully.</string>
     <string name="error_config_validation">Please provide a non-empty name for each meal.</string>
+
+    <!-- Food Library Synchronization (FR 1.2) -->
+    <string name="title_sync_food_library">Master Food Library Sync</string>
+    <string name="desc_sync_food_library">Synchronize your food library with the master food library from Google Sheets. Unmatched foods will be added and foods with lower versions will be updated.</string>
+    <string name="hint_master_sheet_url">Master Google Sheet URL</string>
+    <string name="action_sync_foods">Sync Food Library</string>
+    <string name="sync_in_progress">Synchronizing food library with master sheet…</string>
+    <string name="sync_success">Sync complete: %1$d added, %2$d updated, %3$d unchanged.</string>
+    <string name="sync_error">Sync failed: %1$s</string>
 
     <!-- Common Actions -->
     <string name="action_save">Save</string>

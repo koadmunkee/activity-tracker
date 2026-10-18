@@ -169,11 +169,100 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="16dp"
             android:text="@string/save_config"
             android:textSize="15sp"
             app:icon="@drawable/ic_check"
             app:iconGravity="textStart" />
+
+        <!-- Master Food Library Sync Section (FR 1.2) -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp"
+            app:cardBackgroundColor="@color/clinical_card_bg"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:strokeColor="@color/clinical_card_stroke"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_sync_food_library"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/desc_sync_food_library"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="13sp" />
+
+                <!-- URL Input -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="@string/hint_master_sheet_url"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusTopStart="8dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_sync_url"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textUri"
+                        android:textSize="13sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Sync Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_sync_food_library"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/action_sync_foods"
+                    android:textSize="14sp"
+                    app:icon="@drawable/ic_food"
+                    app:iconGravity="textStart" />
+
+                <!-- Progress Bar -->
+                <ProgressBar
+                    android:id="@+id/progress_sync"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:indeterminate="true"
+                    android:visibility="gone" />
+
+                <!-- Status / Error Text -->
+                <TextView
+                    android:id="@+id/text_sync_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

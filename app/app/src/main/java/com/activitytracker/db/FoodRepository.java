@@ -6,14 +6,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.activitytracker.model.FoodItem;
+import com.activitytracker.sync.FoodSyncStore;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Repository for FoodItem persistence operations.
+ * Repository for FoodItem persistence operations. Implements FoodSyncStore for master synchronization.
  */
-public class FoodRepository {
+public class FoodRepository implements FoodSyncStore {
 
     private final DatabaseHelper dbHelper;
 
@@ -94,6 +95,7 @@ public class FoodRepository {
         cv.put(DatabaseHelper.COL_FOOD_OMEGA3, food.getOmega3());
         cv.put(DatabaseHelper.COL_FOOD_OMEGA6, food.getOmega6());
         cv.put(DatabaseHelper.COL_FOOD_IS_ARCHIVED, food.isArchived() ? 1 : 0);
+        cv.put(DatabaseHelper.COL_FOOD_VERSION, food.getVersion());
         return cv;
     }
 
@@ -118,7 +120,8 @@ public class FoodRepository {
                         cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_FOOD_CARBS)),
                         cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_FOOD_OMEGA3)),
                         cursor.getDouble(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_FOOD_OMEGA6)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_FOOD_IS_ARCHIVED)) == 1
+                        cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_FOOD_IS_ARCHIVED)) == 1,
+                        cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COL_FOOD_VERSION))
                 );
                 foods.add(item);
             }
