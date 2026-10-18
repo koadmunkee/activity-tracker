@@ -185,8 +185,8 @@ public class TemplateFoodRowAdapter extends RecyclerView.Adapter<TemplateFoodRow
         private void updateNutrients(TemplateItem item) {
             NutrientSummary s = item.computeNutrients();
             textNutrients.setText(String.format(Locale.US,
-                    "%.0f kcal | C: %.1fg | P: %.1fg | F: %.1fg | Fib: %.1fg | Chol: %.0fmg",
-                    s.getCalories(), s.getDigestableCarbs(), s.getProtein(), s.getFat(), s.getFiber(), s.getCholesterol()));
+                    "%.0f kcal | C: %.1fg | P: %.1fg | F: %.1fg (Sat: %.1fg) | Chol: %.1fg",
+                    s.getCalories(), s.getDigestableCarbs(), s.getProtein(), s.getFat(), s.getSaturatedFat(), s.getCholesterol()));
         }
     }
 }
