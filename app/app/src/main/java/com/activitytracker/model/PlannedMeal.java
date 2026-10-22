@@ -3,9 +3,10 @@ package com.activitytracker.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
- * Represents a planned or committed meal of the day.
+ * Represents a planned or committed meal of the day (FR 2.2).
  */
 public class PlannedMeal implements Serializable {
     private long id;
@@ -15,6 +16,7 @@ public class PlannedMeal implements Serializable {
     private String startTime; // "HH:mm" or "hh:mm a"
     private double insulinDose; // Insulin amount in units
     private String insulinTime; // "HH:mm" or "hh:mm a"
+    private String timeZone; // Time zone ID, e.g. "America/Los_Angeles", "UTC"
     private boolean isCommitted;
     private boolean isAdHoc; // Special ad hoc meal (FR 2.9)
     private List<MealItem> items = new ArrayList<>();
@@ -23,6 +25,7 @@ public class PlannedMeal implements Serializable {
         this.startTime = "";
         this.insulinTime = "";
         this.insulinDose = 0.0;
+        this.timeZone = getDefaultTimeZoneId();
         this.isCommitted = false;
         this.isAdHoc = false;
         this.items = new ArrayList<>();
@@ -31,12 +34,20 @@ public class PlannedMeal implements Serializable {
     public PlannedMeal(long id, String date, String mealName, int mealOrder,
                        String startTime, double insulinDose, String insulinTime,
                        boolean isCommitted) {
-        this(id, date, mealName, mealOrder, startTime, insulinDose, insulinTime, isCommitted, false);
+        this(id, date, mealName, mealOrder, startTime, insulinDose, insulinTime,
+                getDefaultTimeZoneId(), isCommitted, false);
     }
 
     public PlannedMeal(long id, String date, String mealName, int mealOrder,
                        String startTime, double insulinDose, String insulinTime,
                        boolean isCommitted, boolean isAdHoc) {
+        this(id, date, mealName, mealOrder, startTime, insulinDose, insulinTime,
+                getDefaultTimeZoneId(), isCommitted, isAdHoc);
+    }
+
+    public PlannedMeal(long id, String date, String mealName, int mealOrder,
+                       String startTime, double insulinDose, String insulinTime,
+                       String timeZone, boolean isCommitted, boolean isAdHoc) {
         this.id = id;
         this.date = date;
         this.mealName = mealName != null ? mealName : "";
@@ -44,9 +55,20 @@ public class PlannedMeal implements Serializable {
         this.startTime = startTime != null ? startTime : "";
         this.insulinDose = insulinDose;
         this.insulinTime = insulinTime != null ? insulinTime : "";
+        this.timeZone = (timeZone != null && !timeZone.trim().isEmpty())
+                ? timeZone.trim()
+                : getDefaultTimeZoneId();
         this.isCommitted = isCommitted;
         this.isAdHoc = isAdHoc;
         this.items = new ArrayList<>();
+    }
+
+    private static String getDefaultTimeZoneId() {
+        try {
+            return TimeZone.getDefault().getID();
+        } catch (Exception e) {
+            return "UTC";
+        }
     }
 
     public long getId() { return id; }
@@ -69,6 +91,13 @@ public class PlannedMeal implements Serializable {
 
     public String getInsulinTime() { return insulinTime; }
     public void setInsulinTime(String insulinTime) { this.insulinTime = insulinTime != null ? insulinTime : ""; }
+
+    public String getTimeZone() { return timeZone; }
+    public void setTimeZone(String timeZone) {
+        this.timeZone = (timeZone != null && !timeZone.trim().isEmpty())
+                ? timeZone.trim()
+                : getDefaultTimeZoneId();
+    }
 
     public boolean isCommitted() { return isCommitted; }
     public void setCommitted(boolean committed) { isCommitted = committed; }

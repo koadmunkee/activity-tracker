@@ -44,6 +44,12 @@ public class MealRepository {
             }
 
             if (!hasRegularMeals) {
+                String defaultTz;
+                try {
+                    defaultTz = java.util.TimeZone.getDefault().getID();
+                } catch (Exception e) {
+                    defaultTz = "UTC";
+                }
                 for (int i = 0; i < configuredMealNames.size(); i++) {
                     String name = configuredMealNames.get(i);
                     ContentValues cv = new ContentValues();
@@ -52,11 +58,12 @@ public class MealRepository {
                     cv.put(DatabaseHelper.COL_MEAL_START_TIME, "");
                     cv.put(DatabaseHelper.COL_MEAL_INSULIN_DOSE, 0.0);
                     cv.put(DatabaseHelper.COL_MEAL_INSULIN_TIME, "");
+                    cv.put(DatabaseHelper.COL_MEAL_TIME_ZONE, defaultTz);
                     cv.put(DatabaseHelper.COL_MEAL_IS_COMMITTED, 0);
                     cv.put(DatabaseHelper.COL_MEAL_IS_AD_HOC, 0);
                     long newId = db.insert(DatabaseHelper.TABLE_MEALS, null, cv);
 
-                    PlannedMeal meal = new PlannedMeal(newId, null, name, i, "", 0.0, "", false, false);
+                    PlannedMeal meal = new PlannedMeal(newId, null, name, i, "", 0.0, "", defaultTz, false, false);
                     meals.add(meal);
                 }
             }
@@ -78,6 +85,7 @@ public class MealRepository {
             cv.put(DatabaseHelper.COL_MEAL_START_TIME, meal.getStartTime());
             cv.put(DatabaseHelper.COL_MEAL_INSULIN_DOSE, meal.getInsulinDose());
             cv.put(DatabaseHelper.COL_MEAL_INSULIN_TIME, meal.getInsulinTime());
+            cv.put(DatabaseHelper.COL_MEAL_TIME_ZONE, meal.getTimeZone());
             cv.put(DatabaseHelper.COL_MEAL_IS_COMMITTED, meal.isCommitted() ? 1 : 0);
             cv.put(DatabaseHelper.COL_MEAL_IS_AD_HOC, meal.isAdHoc() ? 1 : 0);
             if (meal.getDate() != null) {
@@ -131,6 +139,7 @@ public class MealRepository {
                 cv.put(DatabaseHelper.COL_MEAL_START_TIME, meal.getStartTime());
                 cv.put(DatabaseHelper.COL_MEAL_INSULIN_DOSE, meal.getInsulinDose());
                 cv.put(DatabaseHelper.COL_MEAL_INSULIN_TIME, meal.getInsulinTime());
+                cv.put(DatabaseHelper.COL_MEAL_TIME_ZONE, meal.getTimeZone());
 
                 db.update(DatabaseHelper.TABLE_MEALS, cv,
                         DatabaseHelper.COL_MEAL_ID + " = ?", new String[]{String.valueOf(meal.getId())});
@@ -186,17 +195,25 @@ public class MealRepository {
             cursor.close();
         }
 
+        String defaultTz;
+        try {
+            defaultTz = java.util.TimeZone.getDefault().getID();
+        } catch (Exception e) {
+            defaultTz = "UTC";
+        }
+
         ContentValues cv = new ContentValues();
         cv.put(DatabaseHelper.COL_MEAL_NAME, mealName);
         cv.put(DatabaseHelper.COL_MEAL_ORDER, maxOrder);
         cv.put(DatabaseHelper.COL_MEAL_START_TIME, "");
         cv.put(DatabaseHelper.COL_MEAL_INSULIN_DOSE, 0.0);
         cv.put(DatabaseHelper.COL_MEAL_INSULIN_TIME, "");
+        cv.put(DatabaseHelper.COL_MEAL_TIME_ZONE, defaultTz);
         cv.put(DatabaseHelper.COL_MEAL_IS_COMMITTED, 0);
         cv.put(DatabaseHelper.COL_MEAL_IS_AD_HOC, 1);
         long newId = db.insert(DatabaseHelper.TABLE_MEALS, null, cv);
 
-        return new PlannedMeal(newId, null, mealName, maxOrder, "", 0.0, "", false, true);
+        return new PlannedMeal(newId, null, mealName, maxOrder, "", 0.0, "", defaultTz, false, true);
     }
 
     /**
@@ -325,7 +342,17 @@ public class MealRepository {
                 int adHocIndex = cursor.getColumnIndex(DatabaseHelper.COL_MEAL_IS_AD_HOC);
                 boolean isAdHoc = (adHocIndex != -1) && (cursor.getInt(adHocIndex) == 1);
 
-                PlannedMeal meal = new PlannedMeal(mealId, date, name, order, startTime, insulinDose, insulinTime, committed, isAdHoc);
+                int tzIndex = cursor.getColumnIndex(DatabaseHelper.COL_MEAL_TIME_ZONE);
+                String timeZone = (tzIndex != -1) ? cursor.getString(tzIndex) : null;
+                if (timeZone == null || timeZone.trim().isEmpty()) {
+                    try {
+                        timeZone = java.util.TimeZone.getDefault().getID();
+                    } catch (Exception e) {
+                        timeZone = "UTC";
+                    }
+                }
+
+                PlannedMeal meal = new PlannedMeal(mealId, date, name, order, startTime, insulinDose, insulinTime, timeZone, committed, isAdHoc);
 
                 // Load meal items
                 List<MealItem> items = loadMealItems(db, mealId);

@@ -124,7 +124,11 @@ public class HistoryDayAdapter extends RecyclerView.Adapter<HistoryDayAdapter.Da
                     displayName += " (" + context.getString(R.string.ad_hoc_badge) + ")";
                 }
                 textMealName.setText(displayName);
-                textMealTime.setText(meal.getStartTime().isEmpty() ? "Time not set" : meal.getStartTime());
+                String timeStr = meal.getStartTime().isEmpty() ? "Time not set" : meal.getStartTime();
+                if (meal.getTimeZone() != null && !meal.getTimeZone().isEmpty()) {
+                    timeStr += " (" + meal.getTimeZone() + ")";
+                }
+                textMealTime.setText(timeStr);
 
                 String insulinDesc = String.format(Locale.US, "Insulin: %.1f units", meal.getInsulinDose());
                 if (!meal.getInsulinTime().isEmpty()) {

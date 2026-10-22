@@ -14,8 +14,10 @@
     <string name="uncommitted_badge">Uncommitted</string>
     <string name="committed_badge">Committed</string>
     <string name="meal_start_time">Meal Start</string>
-    <string name="insulin_dose">Insulin (units)</string>
+    <string name="insulin_dose">Insulin</string>
     <string name="insulin_time">Insulin Time</string>
+    <string name="meal_time_zone">Time Zone</string>
+    <string name="hint_time_zone">Search or enter time zone…</string>
     <string name="add_food_row">+ Add Food</string>
     <string name="commit_day_meals">Commit Day\'s Meals</string>
     <string name="commit_action">Commit</string>

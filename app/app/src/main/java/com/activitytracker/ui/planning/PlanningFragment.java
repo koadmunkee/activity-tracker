@@ -40,15 +40,18 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Meal Planning View - default screen of Activity Tracker.
- * Manages daily meal planning, food/weight items, insulin & timings,
- * live aggregations, template/history population, and committing.
+ * Manages daily meal planning, food/weight items, insulin & timings, time zone,
+ * live aggregations, template/history population, and committing (FR 2.2).
  */
 public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealItemChangeListener {
 
@@ -62,6 +65,7 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
     private TextInputEditText etMealStartTime;
     private TextInputEditText etInsulinDose;
     private TextInputEditText etInsulinTime;
+    private AutoCompleteTextView actvMealTimeZone;
 
     private MaterialButton btnPopulateLastMeal;
     private MaterialButton btnPopulateTemplate;
@@ -120,6 +124,7 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
         etMealStartTime = root.findViewById(R.id.et_meal_start_time);
         etInsulinDose = root.findViewById(R.id.et_insulin_dose);
         etInsulinTime = root.findViewById(R.id.et_insulin_time);
+        actvMealTimeZone = root.findViewById(R.id.actv_meal_time_zone);
 
         btnPopulateLastMeal = root.findViewById(R.id.btn_populate_last_meal);
         btnPopulateTemplate = root.findViewById(R.id.btn_populate_template);
@@ -179,6 +184,34 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
                 mealRepository.saveOrUpdateMeal(activeMeal);
             }
         });
+
+        // Time Zone selector & editor (FR 2.2)
+        if (actvMealTimeZone != null) {
+            String[] availableTimeZones = TimeZone.getAvailableIDs();
+            java.util.Arrays.sort(availableTimeZones);
+            ArrayAdapter<String> tzAdapter = new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_dropdown_item_1line, availableTimeZones);
+            actvMealTimeZone.setAdapter(tzAdapter);
+
+            actvMealTimeZone.addTextChangedListener(new TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (isUpdatingUi || activeMeal == null) return;
+                    String tz = s != null ? s.toString().trim() : "";
+                    activeMeal.setTimeZone(tz);
+                    mealRepository.saveOrUpdateMeal(activeMeal);
+                }
+            });
+
+            actvMealTimeZone.setOnItemClickListener((parent, view1, position, id) -> {
+                if (activeMeal == null) return;
+                String selected = (String) parent.getItemAtPosition(position);
+                activeMeal.setTimeZone(selected);
+                mealRepository.saveOrUpdateMeal(activeMeal);
+            });
+        }
 
         // Add food row
         btnAddFoodRow.setOnClickListener(v -> {
@@ -279,6 +312,7 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
             if (textAdHocBadge != null) textAdHocBadge.setVisibility(View.GONE);
             if (btnDeleteAdHocMeal != null) btnDeleteAdHocMeal.setVisibility(View.GONE);
             if (textAdHocNote != null) textAdHocNote.setVisibility(View.GONE);
+            if (actvMealTimeZone != null) actvMealTimeZone.setText("", false);
             updateEmptyState();
             updateAggregationCards();
             isUpdatingUi = false;
@@ -313,6 +347,20 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
             etInsulinDose.setText(String.format(Locale.US, "%.1f", meal.getInsulinDose()));
         } else {
             etInsulinDose.setText("");
+        }
+
+        if (actvMealTimeZone != null) {
+            String tz = meal.getTimeZone();
+            if (tz == null || tz.trim().isEmpty()) {
+                try {
+                    tz = TimeZone.getDefault().getID();
+                } catch (Exception e) {
+                    tz = "UTC";
+                }
+                meal.setTimeZone(tz);
+                mealRepository.saveOrUpdateMeal(meal);
+            }
+            actvMealTimeZone.setText(tz, false);
         }
 
         foodRowAdapter = new FoodRowAdapter(requireContext(), meal.getItems(), availableFoods, foodRepository, this);

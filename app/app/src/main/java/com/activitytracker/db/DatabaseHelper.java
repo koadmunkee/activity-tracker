@@ -46,6 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_MEAL_START_TIME = "start_time";
     public static final String COL_MEAL_INSULIN_DOSE = "insulin_dose";
     public static final String COL_MEAL_INSULIN_TIME = "insulin_time";
+    public static final String COL_MEAL_TIME_ZONE = "time_zone";
     public static final String COL_MEAL_IS_COMMITTED = "is_committed";
     public static final String COL_MEAL_IS_AD_HOC = "is_ad_hoc";
 
@@ -115,6 +116,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COL_MEAL_START_TIME + " TEXT, "
                 + COL_MEAL_INSULIN_DOSE + " REAL DEFAULT 0.0, "
                 + COL_MEAL_INSULIN_TIME + " TEXT, "
+                + COL_MEAL_TIME_ZONE + " TEXT, "
                 + COL_MEAL_IS_COMMITTED + " INTEGER NOT NULL DEFAULT 0, "
                 + COL_MEAL_IS_AD_HOC + " INTEGER NOT NULL DEFAULT 0)");
 
