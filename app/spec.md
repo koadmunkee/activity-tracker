@@ -35,6 +35,7 @@
 
 ## Technical Constraints
 * Native android application written in Java. The root java directory should be com.activitytracker.
+* Use Google's standard security utilities such as GoogleAuthUtil and GoogleAccountCredential to perform any OAuth 2.0 handshakes. Assume that an OAuth 2.0 Client ID for the application's package and SHA-1 certificate fingerprint already exists.
 
 ## User Flows & Interface
 * **User Flow:** After the user launches the application they'll be taken to the meal planning view. In this view they'll have the ability to see all uncommitted meals starting with the most recent one but with the ability to navigate to earlier meals. From here they can either modify an existing, uncommitted meal or create a new one. The user will add, update and remove food rows from the meal. Adjusting meal weight will not trigger a change in nutrient roll up until the field loses focus, either by interacting outside the field or pressing enter on the keyboard. Food is adjusted by typing in the food field, which brings up a list of autocompleted foods for the user to choose. At any time, the user can enter an insulin amount, insulin time and meal time. After these details are final they'll commit the meal. On successful commit, the meal will dissapear from the meal planning view.
