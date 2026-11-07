@@ -15,6 +15,7 @@ SQL_FILES=(
     "create-meal_legacy.sql"
     "create-meal.sql"
     "create-nutrition.sql"
+    "create-nutrition_100g.sql"
     "create-nutrition-usage.sql"
     "create-postprandial_glucose_3h.sql"
 )
