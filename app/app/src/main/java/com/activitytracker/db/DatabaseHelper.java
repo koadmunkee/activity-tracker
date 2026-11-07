@@ -49,6 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_MEAL_TIME_ZONE = "time_zone";
     public static final String COL_MEAL_IS_COMMITTED = "is_committed";
     public static final String COL_MEAL_IS_AD_HOC = "is_ad_hoc";
+    public static final String COL_MEAL_IS_UPLOADED = "is_uploaded";
 
     // Column names for Meal Items
     public static final String COL_ITEM_ID = "id";
@@ -118,7 +119,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COL_MEAL_INSULIN_TIME + " TEXT, "
                 + COL_MEAL_TIME_ZONE + " TEXT, "
                 + COL_MEAL_IS_COMMITTED + " INTEGER NOT NULL DEFAULT 0, "
-                + COL_MEAL_IS_AD_HOC + " INTEGER NOT NULL DEFAULT 0)");
+                + COL_MEAL_IS_AD_HOC + " INTEGER NOT NULL DEFAULT 0, "
+                + COL_MEAL_IS_UPLOADED + " INTEGER NOT NULL DEFAULT 0)");
 
         // Create Meal Items table
         db.execSQL("CREATE TABLE " + TABLE_MEAL_ITEMS + " ("

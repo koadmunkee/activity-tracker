@@ -18,6 +18,10 @@ public class MealItem implements Serializable {
         this.foodName = "";
     }
 
+    public MealItem(String foodName, double weight) {
+        this(0, 0, 0, foodName, weight);
+    }
+
     public MealItem(long id, long mealId, long foodId, String foodName, double weight) {
         this.id = id;
         this.mealId = mealId;

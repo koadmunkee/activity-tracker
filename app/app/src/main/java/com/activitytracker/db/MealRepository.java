@@ -88,6 +88,7 @@ public class MealRepository {
             cv.put(DatabaseHelper.COL_MEAL_TIME_ZONE, meal.getTimeZone());
             cv.put(DatabaseHelper.COL_MEAL_IS_COMMITTED, meal.isCommitted() ? 1 : 0);
             cv.put(DatabaseHelper.COL_MEAL_IS_AD_HOC, meal.isAdHoc() ? 1 : 0);
+            cv.put(DatabaseHelper.COL_MEAL_IS_UPLOADED, meal.isUploaded() ? 1 : 0);
             if (meal.getDate() != null) {
                 cv.put(DatabaseHelper.COL_MEAL_DATE, meal.getDate());
             }
@@ -131,11 +132,13 @@ public class MealRepository {
             for (PlannedMeal meal : meals) {
                 meal.setDate(date);
                 meal.setCommitted(true);
+                meal.setUploaded(false);
 
                 ContentValues cv = new ContentValues();
                 cv.put(DatabaseHelper.COL_MEAL_DATE, date);
                 cv.put(DatabaseHelper.COL_MEAL_IS_COMMITTED, 1);
                 cv.put(DatabaseHelper.COL_MEAL_IS_AD_HOC, meal.isAdHoc() ? 1 : 0);
+                cv.put(DatabaseHelper.COL_MEAL_IS_UPLOADED, 0);
                 cv.put(DatabaseHelper.COL_MEAL_START_TIME, meal.getStartTime());
                 cv.put(DatabaseHelper.COL_MEAL_INSULIN_DOSE, meal.getInsulinDose());
                 cv.put(DatabaseHelper.COL_MEAL_INSULIN_TIME, meal.getInsulinTime());
@@ -285,6 +288,7 @@ public class MealRepository {
             // Mark the selected day's meals as uncommitted
             ContentValues cv = new ContentValues();
             cv.put(DatabaseHelper.COL_MEAL_IS_COMMITTED, 0);
+            cv.put(DatabaseHelper.COL_MEAL_IS_UPLOADED, 0);
             cv.putNull(DatabaseHelper.COL_MEAL_DATE);
             db.update(DatabaseHelper.TABLE_MEALS, cv,
                     "is_committed = 1 AND date = ?", new String[]{date});
@@ -322,6 +326,35 @@ public class MealRepository {
         }
     }
 
+    /**
+     * Retrieves all committed meals that have not yet been uploaded to cloud storage (FR 1.3).
+     */
+    public synchronized List<PlannedMeal> getUnuploadedCommittedMeals() {
+        return loadMealsFromDb("is_committed = 1 AND is_uploaded = 0", null, "date ASC, meal_order ASC, id ASC");
+    }
+
+    /**
+     * Marks meals as uploaded to cloud storage by their IDs (FR 1.3).
+     */
+    public synchronized void markMealsAsUploaded(List<Long> mealIds) {
+        if (mealIds == null || mealIds.isEmpty()) return;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues cv = new ContentValues();
+            cv.put(DatabaseHelper.COL_MEAL_IS_UPLOADED, 1);
+            for (Long id : mealIds) {
+                if (id != null) {
+                    db.update(DatabaseHelper.TABLE_MEALS, cv,
+                            DatabaseHelper.COL_MEAL_ID + " = ?", new String[]{String.valueOf(id)});
+                }
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     private List<PlannedMeal> loadMealsFromDb(String selection, String[] selectionArgs, String orderBy) {
         List<PlannedMeal> meals = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -342,6 +375,9 @@ public class MealRepository {
                 int adHocIndex = cursor.getColumnIndex(DatabaseHelper.COL_MEAL_IS_AD_HOC);
                 boolean isAdHoc = (adHocIndex != -1) && (cursor.getInt(adHocIndex) == 1);
 
+                int upIndex = cursor.getColumnIndex(DatabaseHelper.COL_MEAL_IS_UPLOADED);
+                boolean isUploaded = (upIndex != -1) && (cursor.getInt(upIndex) == 1);
+
                 int tzIndex = cursor.getColumnIndex(DatabaseHelper.COL_MEAL_TIME_ZONE);
                 String timeZone = (tzIndex != -1) ? cursor.getString(tzIndex) : null;
                 if (timeZone == null || timeZone.trim().isEmpty()) {
@@ -352,7 +388,7 @@ public class MealRepository {
                     }
                 }
 
-                PlannedMeal meal = new PlannedMeal(mealId, date, name, order, startTime, insulinDose, insulinTime, timeZone, committed, isAdHoc);
+                PlannedMeal meal = new PlannedMeal(mealId, date, name, order, startTime, insulinDose, insulinTime, timeZone, committed, isAdHoc, isUploaded);
 
                 // Load meal items
                 List<MealItem> items = loadMealItems(db, mealId);

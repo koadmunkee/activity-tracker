@@ -68,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             bottomNav.setSelectedItemId(R.id.nav_planning);
         }
+
+        // Initialize background cloud sync if enabled (FR 1.3)
+        com.activitytracker.sync.MealCloudSynchronizer.getInstance(this).startPeriodicSyncIfEnabled();
     }
 
     private void setupBottomNavigation() {

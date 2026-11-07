@@ -19,6 +19,7 @@ public class PlannedMeal implements Serializable {
     private String timeZone; // Time zone ID, e.g. "America/Los_Angeles", "UTC"
     private boolean isCommitted;
     private boolean isAdHoc; // Special ad hoc meal (FR 2.9)
+    private boolean isUploaded; // Uploaded to cloud storage (FR 1.3)
     private List<MealItem> items = new ArrayList<>();
 
     public PlannedMeal() {
@@ -28,6 +29,7 @@ public class PlannedMeal implements Serializable {
         this.timeZone = getDefaultTimeZoneId();
         this.isCommitted = false;
         this.isAdHoc = false;
+        this.isUploaded = false;
         this.items = new ArrayList<>();
     }
 
@@ -35,19 +37,26 @@ public class PlannedMeal implements Serializable {
                        String startTime, double insulinDose, String insulinTime,
                        boolean isCommitted) {
         this(id, date, mealName, mealOrder, startTime, insulinDose, insulinTime,
-                getDefaultTimeZoneId(), isCommitted, false);
+                getDefaultTimeZoneId(), isCommitted, false, false);
     }
 
     public PlannedMeal(long id, String date, String mealName, int mealOrder,
                        String startTime, double insulinDose, String insulinTime,
                        boolean isCommitted, boolean isAdHoc) {
         this(id, date, mealName, mealOrder, startTime, insulinDose, insulinTime,
-                getDefaultTimeZoneId(), isCommitted, isAdHoc);
+                getDefaultTimeZoneId(), isCommitted, isAdHoc, false);
     }
 
     public PlannedMeal(long id, String date, String mealName, int mealOrder,
                        String startTime, double insulinDose, String insulinTime,
                        String timeZone, boolean isCommitted, boolean isAdHoc) {
+        this(id, date, mealName, mealOrder, startTime, insulinDose, insulinTime,
+                timeZone, isCommitted, isAdHoc, false);
+    }
+
+    public PlannedMeal(long id, String date, String mealName, int mealOrder,
+                       String startTime, double insulinDose, String insulinTime,
+                       String timeZone, boolean isCommitted, boolean isAdHoc, boolean isUploaded) {
         this.id = id;
         this.date = date;
         this.mealName = mealName != null ? mealName : "";
@@ -60,6 +69,7 @@ public class PlannedMeal implements Serializable {
                 : getDefaultTimeZoneId();
         this.isCommitted = isCommitted;
         this.isAdHoc = isAdHoc;
+        this.isUploaded = isUploaded;
         this.items = new ArrayList<>();
     }
 
@@ -104,6 +114,9 @@ public class PlannedMeal implements Serializable {
 
     public boolean isAdHoc() { return isAdHoc; }
     public void setAdHoc(boolean adHoc) { isAdHoc = adHoc; }
+
+    public boolean isUploaded() { return isUploaded; }
+    public void setUploaded(boolean uploaded) { isUploaded = uploaded; }
 
     public List<MealItem> getItems() { return items; }
     public void setItems(List<MealItem> items) {
