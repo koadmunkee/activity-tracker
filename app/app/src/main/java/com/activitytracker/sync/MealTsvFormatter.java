@@ -10,26 +10,28 @@ import java.util.Locale;
 /**
  * Formats committed meals into TSV format for Google Cloud Storage and BigQuery reporting (FR 1.3).
  *
- * 13 Columns in exact order:
+ * 14 Columns in exact order:
  * 1. local date
  * 2. local time
- * 3. carbohydrate
- * 4. saturated fat
- * 5. fat
- * 6. protein
- * 7. fiber
- * 8. cholesterol
- * 9. digestable carbohydrate
- * 10. description (formatted as weight followed by a single space followed by food name, separated by semi-colon)
- * 11. insulin units
- * 12. insulin time
- * 13. timezone
+ * 3. calorie
+ * 4. carbohydrate
+ * 5. saturated fat
+ * 6. fat
+ * 7. protein
+ * 8. fiber
+ * 9. cholesterol
+ * 10. digestable carbohydrate
+ * 11. description (formatted as weight followed by a single space followed by food name, separated by semi-colon)
+ * 12. insulin units
+ * 13. insulin time
+ * 14. timezone
  */
 public class MealTsvFormatter {
 
     public static final String[] COLUMNS = new String[] {
             "local date",
             "local time",
+            "calorie",
             "carbohydrate",
             "saturated fat",
             "fat",
@@ -45,12 +47,22 @@ public class MealTsvFormatter {
 
     public static final String HEADER = String.join("\t", COLUMNS);
 
+    /**
+     * Determines whether a meal has any food/weight pairs (FR 1.3).
+     * Meals that don't have any food/weight pairs should not be written to the TSV file.
+     */
+    public static boolean hasFoodWeightPairs(PlannedMeal meal) {
+        return meal != null && meal.hasFoodWeightPairs();
+    }
+
     public static String formatMealsToTsv(List<PlannedMeal> meals) {
         StringBuilder sb = new StringBuilder();
         sb.append(HEADER).append("\n");
         if (meals != null) {
             for (PlannedMeal meal : meals) {
-                sb.append(formatMealRow(meal)).append("\n");
+                if (hasFoodWeightPairs(meal)) {
+                    sb.append(formatMealRow(meal)).append("\n");
+                }
             }
         }
         return sb.toString();
@@ -62,6 +74,7 @@ public class MealTsvFormatter {
 
         String localDate = meal.getDate() != null ? meal.getDate().trim() : "";
         String localTime = meal.getStartTime() != null ? meal.getStartTime().trim() : "";
+        String calorie = formatNumber(summary.getCalories());
         String carb = formatNumber(summary.getCarbohydrates());
         String satFat = formatNumber(summary.getSaturatedFat());
         String fat = formatNumber(summary.getFat());
@@ -77,6 +90,7 @@ public class MealTsvFormatter {
         return String.join("\t",
                 localDate,
                 localTime,
+                calorie,
                 carb,
                 satFat,
                 fat,
@@ -94,15 +108,24 @@ public class MealTsvFormatter {
     public static String formatDescription(List<MealItem> items) {
         if (items == null || items.isEmpty()) return "";
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < items.size(); i++) {
-            MealItem item = items.get(i);
-            if (i > 0) {
+        boolean first = true;
+        for (MealItem item : items) {
+            if (item == null) continue;
+            String foodName = item.getFoodName();
+            if ((foodName == null || foodName.trim().isEmpty()) && item.getFoodItem() != null) {
+                foodName = item.getFoodItem().getName();
+            }
+            foodName = foodName != null ? foodName.trim() : "";
+            foodName = foodName.replace("\t", " ").replace("\n", " ").replace("\r", " ");
+            if (foodName.isEmpty()) continue;
+            if (item.getWeight() <= 0 || Double.isNaN(item.getWeight())) continue;
+
+            if (!first) {
                 sb.append(";");
             }
             String weightStr = formatNumber(item.getWeight());
-            String foodName = item.getFoodName() != null ? item.getFoodName().trim() : "";
-            foodName = foodName.replace("\t", " ").replace("\n", " ").replace("\r", " ");
             sb.append(weightStr).append(" ").append(foodName);
+            first = false;
         }
         return sb.toString();
     }

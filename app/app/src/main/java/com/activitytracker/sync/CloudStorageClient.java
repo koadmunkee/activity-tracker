@@ -93,7 +93,7 @@ public class CloudStorageClient {
      *
      * @param bearerToken OAuth 2.0 Bearer access token
      * @param objectName  Unique name of the destination object in the bucket (e.g. meals_20261028_120000.tsv)
-     * @param tsvContent  Full TSV file content (13 columns, one meal per row)
+     * @param tsvContent  Full TSV file content (14 columns, one meal per row)
      * @return true if upload succeeded (HTTP 2xx)
      * @throws IOException on network or HTTP error
      */

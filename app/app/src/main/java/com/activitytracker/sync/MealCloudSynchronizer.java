@@ -172,6 +172,27 @@ public class MealCloudSynchronizer {
                 return new SyncResult(0, "", msg, true);
             }
 
+            // Filter meals: only committed meals that have food/weight pairs should be written to the TSV file (FR 1.3)
+            List<PlannedMeal> mealsToUpload = new ArrayList<>();
+            List<Long> allPendingIds = new ArrayList<>();
+            for (PlannedMeal m : pendingMeals) {
+                if (m != null) {
+                    allPendingIds.add(m.getId());
+                    if (MealTsvFormatter.hasFoodWeightPairs(m)) {
+                        mealsToUpload.add(m);
+                    }
+                }
+            }
+
+            if (mealsToUpload.isEmpty()) {
+                // All pending committed meals had no food/weight pairs.
+                // Mark them as uploaded so they don't block subsequent sync cycles.
+                store.markMealsAsUploaded(allPendingIds);
+                String msg = "No pending meals with food/weight pairs to upload";
+                store.setLastSyncStatus(msg);
+                return new SyncResult(0, "", msg, true);
+            }
+
             // 1. Acquire OAuth 2.0 Bearer access token
             String accountName = store.getCloudAccountName();
             String accessToken = GoogleOAuthManager.getAccessToken(context, accountName);
@@ -179,32 +200,28 @@ public class MealCloudSynchronizer {
                 throw new IllegalStateException("Failed to obtain OAuth 2.0 access token for account: " + accountName);
             }
 
-            // 2. Format meals into 13-column TSV
-            String tsvData = MealTsvFormatter.formatMealsToTsv(pendingMeals);
+            // 2. Format meals into 14-column TSV (meals without food/weight pairs are excluded)
+            String tsvData = MealTsvFormatter.formatMealsToTsv(mealsToUpload);
 
             // 3. Generate unique TSV object name: meals_yyyyMMdd_HHmmss_xxx.tsv
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
             String timestamp = sdf.format(new Date());
-            String fileName = String.format("meals_%s_%d.tsv", timestamp, pendingMeals.size());
+            String fileName = String.format("meals_%s_%d.tsv", timestamp, mealsToUpload.size());
 
             // 4. Upload to Cloud Storage bucket
             storageClient.uploadTsv(accessToken, fileName, tsvData);
 
-            // 5. Mark meals as uploaded in SQLite
-            List<Long> uploadedIds = new ArrayList<>();
-            for (PlannedMeal m : pendingMeals) {
-                uploadedIds.add(m.getId());
-            }
-            store.markMealsAsUploaded(uploadedIds);
+            // 5. Mark meals as uploaded in SQLite (including empty meals that were skipped)
+            store.markMealsAsUploaded(allPendingIds);
 
             // 6. Record status & timestamp
             long now = System.currentTimeMillis();
             store.setLastSyncTimestamp(now);
             String successMsg = String.format(Locale.US, "Uploaded %d meal(s) successfully as %s",
-                    pendingMeals.size(), fileName);
+                    mealsToUpload.size(), fileName);
             store.setLastSyncStatus(successMsg);
 
-            return new SyncResult(pendingMeals.size(), fileName, successMsg, true);
+            return new SyncResult(mealsToUpload.size(), fileName, successMsg, true);
 
         } catch (UserRecoverableAuthException urae) {
             Intent recoveryIntent = urae.getIntent();

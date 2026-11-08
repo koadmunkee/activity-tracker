@@ -168,6 +168,28 @@ public class PlannedMeal implements Serializable {
     }
 
     /**
+     * Checks if this meal contains at least one food/weight pair with a recognized food name and weight > 0 (FR 1.3).
+     * Meals that don't have any food/weight pairs should not be written to the cloud storage TSV file.
+     */
+    public boolean hasFoodWeightPairs() {
+        if (items == null || items.isEmpty()) {
+            return false;
+        }
+        for (MealItem item : items) {
+            if (item != null) {
+                String name = item.getFoodName();
+                if ((name == null || name.trim().isEmpty()) && item.getFoodItem() != null) {
+                    name = item.getFoodItem().getName();
+                }
+                if (name != null && !name.trim().isEmpty() && item.getWeight() > 0 && !Double.isNaN(item.getWeight())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Checks if this meal has food but is missing meal start time (FR 2.10).
      */
     public boolean hasMissingMealTime() {
