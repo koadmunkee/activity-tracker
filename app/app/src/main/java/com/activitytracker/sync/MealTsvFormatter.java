@@ -21,7 +21,7 @@ import java.util.Locale;
  * 8. fiber
  * 9. cholesterol
  * 10. digestable carbohydrate
- * 11. description (formatted as weight followed by a single space followed by food name, separated by semi-colon)
+ * 11. description (formatted as weight followed by a single space followed by food name, separated by semi-colon and ending with a semi-colon)
  * 12. insulin units
  * 13. insulin time
  * 14. timezone
@@ -108,7 +108,6 @@ public class MealTsvFormatter {
     public static String formatDescription(List<MealItem> items) {
         if (items == null || items.isEmpty()) return "";
         StringBuilder sb = new StringBuilder();
-        boolean first = true;
         for (MealItem item : items) {
             if (item == null) continue;
             String foodName = item.getFoodName();
@@ -120,12 +119,8 @@ public class MealTsvFormatter {
             if (foodName.isEmpty()) continue;
             if (item.getWeight() <= 0 || Double.isNaN(item.getWeight())) continue;
 
-            if (!first) {
-                sb.append(";");
-            }
             String weightStr = formatNumber(item.getWeight());
-            sb.append(weightStr).append(" ").append(foodName);
-            first = false;
+            sb.append(weightStr).append(" ").append(foodName).append(";");
         }
         return sb.toString();
     }
