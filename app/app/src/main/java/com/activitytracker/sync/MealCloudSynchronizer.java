@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -102,6 +103,30 @@ public class MealCloudSynchronizer {
         this.mainHandler = (looper != null) ? new Handler(looper) : null;
     }
 
+    private final List<SyncCallback> listeners = new CopyOnWriteArrayList<>();
+
+    public void addListener(SyncCallback listener) {
+        if (listener != null && !listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removeListener(SyncCallback listener) {
+        if (listener != null) {
+            listeners.remove(listener);
+        }
+    }
+
+    /**
+     * Triggers asynchronous push if cloud synchronization is enabled.
+     * Safe to invoke from any view, Fragment, or Activity lifecycle event.
+     */
+    public void triggerSyncIfEnabled() {
+        if (store != null && store.isCloudSyncEnabled()) {
+            syncPendingMealsAsync(null);
+        }
+    }
+
     /**
      * Starts periodic sync at regular intervals if cloud sync is enabled.
      */
@@ -117,7 +142,11 @@ public class MealCloudSynchronizer {
 
         if (periodicTask == null || periodicTask.isCancelled() || periodicTask.isDone()) {
             periodicTask = scheduler.scheduleWithFixedDelay(
-                    this::syncPendingMeals,
+                    () -> {
+                        try {
+                            triggerSyncIfEnabled();
+                        } catch (Throwable ignored) {}
+                    },
                     0,
                     DEFAULT_SYNC_INTERVAL_MINUTES,
                     TimeUnit.MINUTES
@@ -246,29 +275,56 @@ public class MealCloudSynchronizer {
     }
 
     private void postSuccess(SyncCallback callback, SyncResult result) {
-        if (callback == null) return;
+        Runnable r = () -> {
+            if (callback != null) {
+                callback.onSuccess(result);
+            }
+            for (SyncCallback l : listeners) {
+                if (l != callback) {
+                    l.onSuccess(result);
+                }
+            }
+        };
         if (mainHandler != null) {
-            mainHandler.post(() -> callback.onSuccess(result));
+            mainHandler.post(r);
         } else {
-            callback.onSuccess(result);
+            r.run();
         }
     }
 
     private void postRecoverableAuth(SyncCallback callback, Intent recoveryIntent) {
-        if (callback == null) return;
+        Runnable r = () -> {
+            if (callback != null) {
+                callback.onRecoverableAuth(recoveryIntent);
+            }
+            for (SyncCallback l : listeners) {
+                if (l != callback) {
+                    l.onRecoverableAuth(recoveryIntent);
+                }
+            }
+        };
         if (mainHandler != null) {
-            mainHandler.post(() -> callback.onRecoverableAuth(recoveryIntent));
+            mainHandler.post(r);
         } else {
-            callback.onRecoverableAuth(recoveryIntent);
+            r.run();
         }
     }
 
     private void postError(SyncCallback callback, String errorMessage) {
-        if (callback == null) return;
+        Runnable r = () -> {
+            if (callback != null) {
+                callback.onError(errorMessage);
+            }
+            for (SyncCallback l : listeners) {
+                if (l != callback) {
+                    l.onError(errorMessage);
+                }
+            }
+        };
         if (mainHandler != null) {
-            mainHandler.post(() -> callback.onError(errorMessage));
+            mainHandler.post(r);
         } else {
-            callback.onError(errorMessage);
+            r.run();
         }
     }
 }

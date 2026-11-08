@@ -1,7 +1,10 @@
 package com.activitytracker;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -11,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.activitytracker.model.MealTemplate;
+import com.activitytracker.sync.MealCloudSynchronizer;
 import com.activitytracker.ui.config.ConfigFragment;
 import com.activitytracker.ui.foods.FoodsFragment;
 import com.activitytracker.ui.history.HistoryFragment;
@@ -33,12 +37,46 @@ public class MainActivity extends AppCompatActivity {
     private FoodsFragment foodsFragment;
     private ConfigFragment configFragment;
 
+    private ActivityResultLauncher<Intent> authConsentLauncher;
+
+    private final MealCloudSynchronizer.SyncCallback globalSyncCallback = new MealCloudSynchronizer.SyncCallback() {
+        @Override
+        public void onSuccess(MealCloudSynchronizer.SyncResult result) {
+            // Background sync success across any active view
+        }
+
+        @Override
+        public void onRecoverableAuth(Intent recoveryIntent) {
+            // Launch interactive OAuth consent dialog from whatever view the user is on
+            if (recoveryIntent != null && authConsentLauncher != null) {
+                try {
+                    authConsentLauncher.launch(recoveryIntent);
+                } catch (Exception ignored) {}
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+            // Handled or recorded
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Enable Edge to Edge
         EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Register Activity-level OAuth consent launcher to enable authorization from any view
+        authConsentLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        MealCloudSynchronizer.getInstance(this).triggerSyncIfEnabled();
+                    }
+                }
+        );
 
         bottomNav = findViewById(R.id.bottom_navigation);
 
@@ -69,8 +107,26 @@ public class MainActivity extends AppCompatActivity {
             bottomNav.setSelectedItemId(R.id.nav_planning);
         }
 
-        // Initialize background cloud sync if enabled (FR 1.3)
-        com.activitytracker.sync.MealCloudSynchronizer.getInstance(this).startPeriodicSyncIfEnabled();
+        // Initialize background cloud sync listener and periodic task if enabled (FR 1.3)
+        MealCloudSynchronizer synchronizer = MealCloudSynchronizer.getInstance(this);
+        synchronizer.addListener(globalSyncCallback);
+        synchronizer.startPeriodicSyncIfEnabled();
+        synchronizer.triggerSyncIfEnabled();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Ensure synchronization check runs whenever returning to the application
+        MealCloudSynchronizer synchronizer = MealCloudSynchronizer.getInstance(this);
+        synchronizer.startPeriodicSyncIfEnabled();
+        synchronizer.triggerSyncIfEnabled();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MealCloudSynchronizer.getInstance(this).removeListener(globalSyncCallback);
     }
 
     private void setupBottomNavigation() {
@@ -105,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_container, selectedFragment);
             ft.commit();
+
+            // Trigger synchronization if enabled whenever navigating between views
+            MealCloudSynchronizer.getInstance(this).triggerSyncIfEnabled();
 
             return true;
         });

@@ -607,6 +607,9 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
         Snackbar.make(requireView(),
                 String.format(getString(R.string.commit_success), DateTimeUtil.formatDisplayDate(date)),
                 Snackbar.LENGTH_LONG).show();
+
+        // Trigger cloud synchronization if enabled (FR 1.3) regardless of current view
+        com.activitytracker.sync.MealCloudSynchronizer.getInstance(requireContext()).triggerSyncIfEnabled();
     }
 
     /**

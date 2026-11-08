@@ -203,6 +203,8 @@ public class ConfigFragment extends Fragment {
             btnCloudSyncNow.setOnClickListener(v -> triggerCloudSyncNow());
         }
 
+        mealCloudSynchronizer.addListener(configSyncCallback);
+
         loadConfiguration();
         updateCloudSyncUi();
     }
@@ -404,6 +406,40 @@ public class ConfigFragment extends Fragment {
                         Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private final MealCloudSynchronizer.SyncCallback configSyncCallback = new MealCloudSynchronizer.SyncCallback() {
+        @Override
+        public void onSuccess(MealCloudSynchronizer.SyncResult result) {
+            if (!isAdded()) return;
+            if (progressCloudSync != null) progressCloudSync.setVisibility(View.GONE);
+            if (btnCloudSyncNow != null) btnCloudSyncNow.setEnabled(true);
+            updateCloudSyncUi();
+        }
+
+        @Override
+        public void onRecoverableAuth(Intent recoveryIntent) {
+            if (!isAdded()) return;
+            if (progressCloudSync != null) progressCloudSync.setVisibility(View.GONE);
+            if (btnCloudSyncNow != null) btnCloudSyncNow.setEnabled(true);
+            updateCloudSyncUi();
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+            if (!isAdded()) return;
+            if (progressCloudSync != null) progressCloudSync.setVisibility(View.GONE);
+            if (btnCloudSyncNow != null) btnCloudSyncNow.setEnabled(true);
+            updateCloudSyncUi();
+        }
+    };
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mealCloudSynchronizer != null) {
+            mealCloudSynchronizer.removeListener(configSyncCallback);
+        }
     }
 
     @Override
