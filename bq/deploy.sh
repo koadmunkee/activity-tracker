@@ -12,6 +12,7 @@ SQL_FILES=(
     "create-meal_v1_raw.sql"
     "create-meal_v2_raw.sql"
     "create-meal_v3_raw.sql"
+    "create-meal_v4_raw.sql"
     "create-meal_legacy.sql"
     "create-meal.sql"
     "create-nutrition.sql"

@@ -1,28 +1,52 @@
 CREATE OR REPLACE VIEW `activity_tracker_dataset.meal`
 AS
 SELECT
+  TIMESTAMP(
+    DATETIME(date, PARSE_TIME('%H:%M', time)),
+    IFNULL(timezone, 'America/Los_Angeles')) AS meal_timestamp,
+  date AS local_meal_date,
+  PARSE_TIME('%H:%M', time) AS local_meal_time,
+  calorie,
+  carbohydrate,
+  saturated_fat,
+  fat,
+  protein,
+  fiber,
+  cholesterol,
+  digestable_cabohydrate,
+  description,
+  insulin_units,
+  IF(
+    insulin_time IS NULL,
+    NULL,
     TIMESTAMP(
-        DATETIME(date, PARSE_TIME('%H:%M', time)),
-        IFNULL(timezone, 'America/Los_Angeles')) AS meal_timestamp,
-    date AS local_meal_date,
-    PARSE_TIME('%H:%M', time) AS local_meal_time,
-    calorie,
-    carbohydrate,
-    saturated_fat,
-    fat,
-    protein,
-    fiber,
-    cholesterol,
-    digestable_cabohydrate,
-    description,
-    insulin_units,
-    IF(
-        insulin_time IS NULL,
-        NULL,
-        TIMESTAMP(
-            DATETIME(date, PARSE_TIME('%H:%M', insulin_time)),
-            IFNULL(timezone, 'America/Los_Angeles'))) AS insulin_timestamp,
-    PARSE_TIME('%H:%M', insulin_time) AS local_insulin_time,
+      DATETIME(date, PARSE_TIME('%H:%M', insulin_time)),
+      IFNULL(timezone, 'America/Los_Angeles'))) AS insulin_timestamp,
+  PARSE_TIME('%H:%M', insulin_time) AS local_insulin_time,
 FROM `activity_tracker_dataset.meal_v3_raw`
 WHERE
-    date IS NOT NULL;
+  date IS NOT NULL
+UNION ALL
+SELECT
+  TIMESTAMP(DATETIME(local_date, PARSE_TIME('%l:%M %p', local_time)), timezone)
+    AS meal_timestamp,
+  local_date AS local_meal_date,
+  PARSE_TIME('%l:%M %p', local_time) AS local_meal_time,
+  calorie,
+  carbohydrate,
+  saturated_fat,
+  fat,
+  protein,
+  fiber,
+  cholesterol,
+  digestable_carbohydrate,
+  description,
+  insulin_units,
+  IF(
+    insulin_local_time IS NULL,
+    NULL,
+    TIMESTAMP(
+      DATETIME(local_date, PARSE_TIME('%l:%M %p', insulin_local_time)),
+      timezone)) AS insulin_timestamp,
+  PARSE_TIME('%l:%M %p', insulin_local_time) AS local_insulin_time
+FROM `activity_tracker_dataset.meal_v4_raw`;
