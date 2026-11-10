@@ -42,6 +42,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.HorizontalScrollView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -55,6 +56,10 @@ import java.util.TimeZone;
  */
 public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealItemChangeListener {
 
+    private static final String KEY_ACTIVE_MEAL_ID = "key_active_meal_id";
+    private static final String KEY_ACTIVE_MEAL_NAME = "key_active_meal_name";
+
+    private HorizontalScrollView scrollMealTabs;
     private ChipGroup chipGroupMeals;
     private TextView textDayPrimary;
     private TextView textDaySecondary;
@@ -86,6 +91,8 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
 
     private List<PlannedMeal> uncommittedMeals = new ArrayList<>();
     private PlannedMeal activeMeal;
+    private long lastActiveMealId = -1;
+    private String lastActiveMealName = null;
     private List<FoodItem> availableFoods = new ArrayList<>();
     private FoodRowAdapter foodRowAdapter;
 
@@ -102,6 +109,11 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (savedInstanceState != null) {
+            lastActiveMealId = savedInstanceState.getLong(KEY_ACTIVE_MEAL_ID, -1);
+            lastActiveMealName = savedInstanceState.getString(KEY_ACTIVE_MEAL_NAME);
+        }
+
         Context context = requireContext();
         foodRepository = new FoodRepository(context);
         mealRepository = new MealRepository(context);
@@ -113,7 +125,20 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
         loadPlanningData();
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (activeMeal != null) {
+            outState.putLong(KEY_ACTIVE_MEAL_ID, activeMeal.getId());
+            outState.putString(KEY_ACTIVE_MEAL_NAME, activeMeal.getMealName());
+        } else if (lastActiveMealId != -1) {
+            outState.putLong(KEY_ACTIVE_MEAL_ID, lastActiveMealId);
+            outState.putString(KEY_ACTIVE_MEAL_NAME, lastActiveMealName);
+        }
+    }
+
     private void initViews(View root) {
+        scrollMealTabs = root.findViewById(R.id.scroll_meal_tabs);
         chipGroupMeals = root.findViewById(R.id.chip_group_meals);
         textDayPrimary = root.findViewById(R.id.text_day_primary_summary);
         textDaySecondary = root.findViewById(R.id.text_day_secondary_summary);
@@ -248,15 +273,47 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
         }
     }
 
+    /**
+     * Resolves the meal to select, preserving the meal that was active or previously viewed
+     * when focus was lost or instance state was saved.
+     */
+    public static PlannedMeal resolveMealToSelect(List<PlannedMeal> uncommittedMeals,
+                                                  PlannedMeal activeMeal,
+                                                  long lastActiveMealId,
+                                                  String lastActiveMealName) {
+        if (uncommittedMeals == null || uncommittedMeals.isEmpty()) {
+            return null;
+        }
+        long targetId = (activeMeal != null) ? activeMeal.getId() : lastActiveMealId;
+        String targetName = (activeMeal != null) ? activeMeal.getMealName() : lastActiveMealName;
+
+        if (targetId != -1) {
+            for (PlannedMeal m : uncommittedMeals) {
+                if (m.getId() == targetId) {
+                    return m;
+                }
+            }
+        }
+        if (targetName != null && !targetName.isEmpty()) {
+            for (PlannedMeal m : uncommittedMeals) {
+                if (targetName.equals(m.getMealName())) {
+                    return m;
+                }
+            }
+        }
+        return uncommittedMeals.get(0);
+    }
+
     public void loadPlanningData() {
         List<String> configuredMealNames = configRepository.getConfiguredMealNames();
         availableFoods = foodRepository.getUnarchivedFoods();
         uncommittedMeals = mealRepository.getUncommittedMeals(configuredMealNames);
 
-        setupMealSelectorTabs();
+        PlannedMeal mealToSelect = resolveMealToSelect(uncommittedMeals, activeMeal, lastActiveMealId, lastActiveMealName);
+        setupMealSelectorTabs(mealToSelect);
 
-        if (!uncommittedMeals.isEmpty()) {
-            selectMeal(uncommittedMeals.get(0));
+        if (mealToSelect != null) {
+            selectMeal(mealToSelect);
         } else {
             activeMeal = null;
             updateEmptyState();
@@ -264,7 +321,23 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
         }
     }
 
+    public PlannedMeal getActiveMeal() {
+        return activeMeal;
+    }
+
+    public long getLastActiveMealId() {
+        return lastActiveMealId;
+    }
+
+    public String getLastActiveMealName() {
+        return lastActiveMealName;
+    }
+
     private void setupMealSelectorTabs() {
+        setupMealSelectorTabs(activeMeal);
+    }
+
+    private void setupMealSelectorTabs(PlannedMeal mealToSelect) {
         chipGroupMeals.removeAllViews();
         for (int i = 0; i < uncommittedMeals.size(); i++) {
             PlannedMeal meal = uncommittedMeals.get(i);
@@ -281,16 +354,16 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
             chip.setOnClickListener(v -> selectMeal(targetMeal));
             chipGroupMeals.addView(chip);
 
-            if (activeMeal != null && activeMeal.getId() == meal.getId()) {
+            if (mealToSelect != null && mealToSelect.getId() == meal.getId()) {
                 chip.setChecked(true);
-            } else if (activeMeal == null && i == 0) {
+            } else if (mealToSelect == null && i == 0) {
                 chip.setChecked(true);
             }
         }
     }
 
     private void selectChipForMeal(PlannedMeal meal) {
-        if (meal == null) return;
+        if (meal == null || chipGroupMeals == null) return;
         for (int i = 0; i < chipGroupMeals.getChildCount(); i++) {
             View child = chipGroupMeals.getChildAt(i);
             if (child instanceof Chip) {
@@ -298,6 +371,12 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
                 Object tag = chip.getTag();
                 if (tag instanceof Long && (Long) tag == meal.getId()) {
                     chip.setChecked(true);
+                    if (scrollMealTabs != null) {
+                        scrollMealTabs.post(() -> {
+                            int scrollTo = chip.getLeft() - 40;
+                            scrollMealTabs.smoothScrollTo(Math.max(0, scrollTo), 0);
+                        });
+                    }
                     break;
                 }
             }
@@ -306,6 +385,11 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
 
     private void selectMeal(PlannedMeal meal) {
         this.activeMeal = meal;
+        if (meal != null) {
+            this.lastActiveMealId = meal.getId();
+            this.lastActiveMealName = meal.getMealName();
+        }
+        selectChipForMeal(meal);
         isUpdatingUi = true;
 
         if (meal == null) {
@@ -602,6 +686,9 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
         mealRepository.commitDayMeals(date, uncommittedMeals);
 
         // On successful commit, the meals disappear from the meal planning view (FR 2.3).
+        lastActiveMealId = -1;
+        lastActiveMealName = null;
+        activeMeal = null;
         loadPlanningData();
 
         Snackbar.make(requireView(),
@@ -639,9 +726,8 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
                     }
                     PlannedMeal newMeal = mealRepository.createAdHocMeal(name);
                     uncommittedMeals.add(newMeal);
-                    setupMealSelectorTabs();
+                    setupMealSelectorTabs(newMeal);
                     selectMeal(newMeal);
-                    selectChipForMeal(newMeal);
                     Snackbar.make(requireView(),
                             String.format(getString(R.string.ad_hoc_meal_added), newMeal.getMealName()),
                             Snackbar.LENGTH_SHORT).show();
@@ -665,13 +751,9 @@ public class PlanningFragment extends Fragment implements FoodRowAdapter.OnMealI
                     Snackbar.make(requireView(),
                             String.format(getString(R.string.ad_hoc_meal_deleted), mealToDelete.getMealName()),
                             Snackbar.LENGTH_SHORT).show();
-                    setupMealSelectorTabs();
-                    if (!uncommittedMeals.isEmpty()) {
-                        selectMeal(uncommittedMeals.get(0));
-                        selectChipForMeal(uncommittedMeals.get(0));
-                    } else {
-                        selectMeal(null);
-                    }
+                    PlannedMeal nextMeal = !uncommittedMeals.isEmpty() ? uncommittedMeals.get(0) : null;
+                    setupMealSelectorTabs(nextMeal);
+                    selectMeal(nextMeal);
                 })
                 .setNegativeButton(R.string.action_cancel, null)
                 .show();
